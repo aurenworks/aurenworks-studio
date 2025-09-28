@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import ProjectsPage from "./features/projects/ProjectsPage";
+import { Link } from 'react-router-dom';
+import ProjectsPage from './features/projects/ProjectsPage';
 export default function App() {
   return (
     <div className="p-6 space-y-6">

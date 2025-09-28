@@ -4,801 +4,809 @@
  */
 
 export interface paths {
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Health Check
-         * @description Check the health status of the API
-         */
-        get: operations["getHealth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/projects": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Projects
-         * @description Retrieve a list of projects accessible to the authenticated user
-         */
-        get: operations["listProjects"];
-        put?: never;
-        /**
-         * Create Project
-         * @description Create a new project
-         */
-        post: operations["createProject"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Health Check
+     * @description Check the health status of the API
+     */
+    get: operations['getHealth'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/projects': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/projects/{projectId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get Project
-         * @description Retrieve a specific project by ID
-         */
-        get: operations["getProject"];
-        /**
-         * Update Project
-         * @description Update an existing project
-         */
-        put: operations["updateProject"];
-        post?: never;
-        /**
-         * Delete Project
-         * @description Delete a project and all its associated resources
-         */
-        delete: operations["deleteProject"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * List Projects
+     * @description Retrieve a list of projects accessible to the authenticated user
+     */
+    get: operations['listProjects'];
+    put?: never;
+    /**
+     * Create Project
+     * @description Create a new project
+     */
+    post: operations['createProject'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/projects/{projectId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/projects/{projectId}/components": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Components
-         * @description Retrieve components within a project
-         */
-        get: operations["listComponents"];
-        put?: never;
-        /**
-         * Create Component
-         * @description Create a new component within a project
-         */
-        post: operations["createComponent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get Project
+     * @description Retrieve a specific project by ID
+     */
+    get: operations['getProject'];
+    /**
+     * Update Project
+     * @description Update an existing project
+     */
+    put: operations['updateProject'];
+    post?: never;
+    /**
+     * Delete Project
+     * @description Delete a project and all its associated resources
+     */
+    delete: operations['deleteProject'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/projects/{projectId}/components': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /**
+     * List Components
+     * @description Retrieve components within a project
+     */
+    get: operations['listComponents'];
+    put?: never;
+    /**
+     * Create Component
+     * @description Create a new component within a project
+     */
+    post: operations['createComponent'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        HealthResponse: {
-            /**
-             * @description Health status of the API
-             * @enum {string}
-             */
-            status: "healthy" | "unhealthy";
-            /**
-             * Format: date-time
-             * @description Timestamp of the health check
-             */
-            timestamp: string;
-            /**
-             * @description API version
-             * @example 0.1.0
-             */
-            version?: string;
-            /**
-             * @description API uptime in seconds
-             * @example 3600
-             */
-            uptime?: number;
-        };
-        ErrorResponse: {
-            /**
-             * @description Error code
-             * @example VALIDATION_ERROR
-             */
-            error: string;
-            /**
-             * @description Human-readable error message
-             * @example Invalid request parameters
-             */
-            message: string;
-            /**
-             * Format: date-time
-             * @description Timestamp when the error occurred
-             */
-            timestamp: string;
-            /** @description Additional error details */
-            details?: {
-                [key: string]: unknown;
-            };
-            /**
-             * @description Unique identifier for the request
-             * @example req_123456789
-             */
-            requestId?: string;
-        };
-        Project: {
-            /**
-             * @description Unique identifier for the project
-             * @example my-project
-             */
-            id: string;
-            /**
-             * @description Human-readable name for the project
-             * @example My Project
-             */
-            name: string;
-            /**
-             * @description Optional description of the project
-             * @example A sample project for demonstration
-             */
-            description?: string;
-            status: components["schemas"]["ProjectStatus"];
-            /**
-             * @description Tags associated with the project
-             * @example [
-             *       "web",
-             *       "api",
-             *       "production"
-             *     ]
-             */
-            tags?: string[];
-            /** @description Additional metadata for the project */
-            metadata?: {
-                [key: string]: unknown;
-            };
-            /**
-             * Format: date-time
-             * @description Timestamp when the project was created
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Timestamp when the project was last updated
-             */
-            updatedAt: string;
-            /**
-             * @description User ID who created the project
-             * @example user_123
-             */
-            createdBy?: string;
-        };
-        /**
-         * @description Status of the project
-         * @enum {string}
-         */
-        ProjectStatus: "active" | "inactive" | "archived" | "deleted";
-        CreateProjectRequest: {
-            /**
-             * @description Human-readable name for the project
-             * @example My Project
-             */
-            name: string;
-            /**
-             * @description Optional description of the project
-             * @example A sample project for demonstration
-             */
-            description?: string;
-            /**
-             * @description Tags associated with the project
-             * @example [
-             *       "web",
-             *       "api",
-             *       "production"
-             *     ]
-             */
-            tags?: string[];
-            /** @description Additional metadata for the project */
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
-        UpdateProjectRequest: {
-            /**
-             * @description Human-readable name for the project
-             * @example My Updated Project
-             */
-            name?: string;
-            /**
-             * @description Optional description of the project
-             * @example An updated description
-             */
-            description?: string;
-            status?: components["schemas"]["ProjectStatus"];
-            /**
-             * @description Tags associated with the project
-             * @example [
-             *       "web",
-             *       "api",
-             *       "production"
-             *     ]
-             */
-            tags?: string[];
-            /** @description Additional metadata for the project */
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
-        ProjectListResponse: {
-            projects: components["schemas"]["Project"][];
-            /** @description Total number of projects matching the query */
-            total: number;
-            /** @description Maximum number of projects returned */
-            limit: number;
-            /** @description Number of projects skipped */
-            offset: number;
-        };
-        Component: {
-            /**
-             * @description Unique identifier for the component
-             * @example my-component
-             */
-            id: string;
-            /**
-             * @description Human-readable name for the component
-             * @example My Component
-             */
-            name: string;
-            /**
-             * @description Optional description of the component
-             * @example A sample component for demonstration
-             */
-            description?: string;
-            type: components["schemas"]["ComponentType"];
-            status: components["schemas"]["ComponentStatus"];
-            /**
-             * @description ID of the project this component belongs to
-             * @example my-project
-             */
-            projectId?: string;
-            /** @description Component configuration */
-            config?: {
-                [key: string]: unknown;
-            };
-            /** @description Additional metadata for the component */
-            metadata?: {
-                [key: string]: unknown;
-            };
-            /**
-             * Format: date-time
-             * @description Timestamp when the component was created
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Timestamp when the component was last updated
-             */
-            updatedAt: string;
-            /**
-             * @description User ID who created the component
-             * @example user_123
-             */
-            createdBy?: string;
-        };
-        /**
-         * @description Type of the component
-         * @enum {string}
-         */
-        ComponentType: "service" | "database" | "queue" | "cache" | "storage" | "api" | "worker" | "scheduler";
-        /**
-         * @description Status of the component
-         * @enum {string}
-         */
-        ComponentStatus: "active" | "inactive" | "deploying" | "failed" | "pending";
-        CreateComponentRequest: {
-            /**
-             * @description Human-readable name for the component
-             * @example My Component
-             */
-            name: string;
-            /**
-             * @description Optional description of the component
-             * @example A sample component for demonstration
-             */
-            description?: string;
-            type: components["schemas"]["ComponentType"];
-            /** @description Component configuration */
-            config?: {
-                [key: string]: unknown;
-            };
-            /** @description Additional metadata for the component */
-            metadata?: {
-                [key: string]: unknown;
-            };
-        };
-        ComponentListResponse: {
-            components: components["schemas"]["Component"][];
-            /** @description Total number of components matching the query */
-            total: number;
-            /** @description Maximum number of components returned */
-            limit: number;
-            /** @description Number of components skipped */
-            offset: number;
-        };
+  schemas: {
+    HealthResponse: {
+      /**
+       * @description Health status of the API
+       * @enum {string}
+       */
+      status: 'healthy' | 'unhealthy';
+      /**
+       * Format: date-time
+       * @description Timestamp of the health check
+       */
+      timestamp: string;
+      /**
+       * @description API version
+       * @example 0.1.0
+       */
+      version?: string;
+      /**
+       * @description API uptime in seconds
+       * @example 3600
+       */
+      uptime?: number;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    ErrorResponse: {
+      /**
+       * @description Error code
+       * @example VALIDATION_ERROR
+       */
+      error: string;
+      /**
+       * @description Human-readable error message
+       * @example Invalid request parameters
+       */
+      message: string;
+      /**
+       * Format: date-time
+       * @description Timestamp when the error occurred
+       */
+      timestamp: string;
+      /** @description Additional error details */
+      details?: {
+        [key: string]: unknown;
+      };
+      /**
+       * @description Unique identifier for the request
+       * @example req_123456789
+       */
+      requestId?: string;
+    };
+    Project: {
+      /**
+       * @description Unique identifier for the project
+       * @example my-project
+       */
+      id: string;
+      /**
+       * @description Human-readable name for the project
+       * @example My Project
+       */
+      name: string;
+      /**
+       * @description Optional description of the project
+       * @example A sample project for demonstration
+       */
+      description?: string;
+      status: components['schemas']['ProjectStatus'];
+      /**
+       * @description Tags associated with the project
+       * @example [
+       *       "web",
+       *       "api",
+       *       "production"
+       *     ]
+       */
+      tags?: string[];
+      /** @description Additional metadata for the project */
+      metadata?: {
+        [key: string]: unknown;
+      };
+      /**
+       * Format: date-time
+       * @description Timestamp when the project was created
+       */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description Timestamp when the project was last updated
+       */
+      updatedAt: string;
+      /**
+       * @description User ID who created the project
+       * @example user_123
+       */
+      createdBy?: string;
+    };
+    /**
+     * @description Status of the project
+     * @enum {string}
+     */
+    ProjectStatus: 'active' | 'inactive' | 'archived' | 'deleted';
+    CreateProjectRequest: {
+      /**
+       * @description Human-readable name for the project
+       * @example My Project
+       */
+      name: string;
+      /**
+       * @description Optional description of the project
+       * @example A sample project for demonstration
+       */
+      description?: string;
+      /**
+       * @description Tags associated with the project
+       * @example [
+       *       "web",
+       *       "api",
+       *       "production"
+       *     ]
+       */
+      tags?: string[];
+      /** @description Additional metadata for the project */
+      metadata?: {
+        [key: string]: unknown;
+      };
+    };
+    UpdateProjectRequest: {
+      /**
+       * @description Human-readable name for the project
+       * @example My Updated Project
+       */
+      name?: string;
+      /**
+       * @description Optional description of the project
+       * @example An updated description
+       */
+      description?: string;
+      status?: components['schemas']['ProjectStatus'];
+      /**
+       * @description Tags associated with the project
+       * @example [
+       *       "web",
+       *       "api",
+       *       "production"
+       *     ]
+       */
+      tags?: string[];
+      /** @description Additional metadata for the project */
+      metadata?: {
+        [key: string]: unknown;
+      };
+    };
+    ProjectListResponse: {
+      projects: components['schemas']['Project'][];
+      /** @description Total number of projects matching the query */
+      total: number;
+      /** @description Maximum number of projects returned */
+      limit: number;
+      /** @description Number of projects skipped */
+      offset: number;
+    };
+    Component: {
+      /**
+       * @description Unique identifier for the component
+       * @example my-component
+       */
+      id: string;
+      /**
+       * @description Human-readable name for the component
+       * @example My Component
+       */
+      name: string;
+      /**
+       * @description Optional description of the component
+       * @example A sample component for demonstration
+       */
+      description?: string;
+      type: components['schemas']['ComponentType'];
+      status: components['schemas']['ComponentStatus'];
+      /**
+       * @description ID of the project this component belongs to
+       * @example my-project
+       */
+      projectId?: string;
+      /** @description Component configuration */
+      config?: {
+        [key: string]: unknown;
+      };
+      /** @description Additional metadata for the component */
+      metadata?: {
+        [key: string]: unknown;
+      };
+      /**
+       * Format: date-time
+       * @description Timestamp when the component was created
+       */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description Timestamp when the component was last updated
+       */
+      updatedAt: string;
+      /**
+       * @description User ID who created the component
+       * @example user_123
+       */
+      createdBy?: string;
+    };
+    /**
+     * @description Type of the component
+     * @enum {string}
+     */
+    ComponentType:
+      | 'service'
+      | 'database'
+      | 'queue'
+      | 'cache'
+      | 'storage'
+      | 'api'
+      | 'worker'
+      | 'scheduler';
+    /**
+     * @description Status of the component
+     * @enum {string}
+     */
+    ComponentStatus: 'active' | 'inactive' | 'deploying' | 'failed' | 'pending';
+    CreateComponentRequest: {
+      /**
+       * @description Human-readable name for the component
+       * @example My Component
+       */
+      name: string;
+      /**
+       * @description Optional description of the component
+       * @example A sample component for demonstration
+       */
+      description?: string;
+      type: components['schemas']['ComponentType'];
+      /** @description Component configuration */
+      config?: {
+        [key: string]: unknown;
+      };
+      /** @description Additional metadata for the component */
+      metadata?: {
+        [key: string]: unknown;
+      };
+    };
+    ComponentListResponse: {
+      components: components['schemas']['Component'][];
+      /** @description Total number of components matching the query */
+      total: number;
+      /** @description Maximum number of components returned */
+      limit: number;
+      /** @description Number of components skipped */
+      offset: number;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    getHealth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description API is healthy */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-            /** @description API is unhealthy */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
+  getHealth: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    listProjects: {
-        parameters: {
-            query?: {
-                /** @description Maximum number of projects to return */
-                limit?: number;
-                /** @description Number of projects to skip */
-                offset?: number;
-                /** @description Filter projects by status */
-                status?: components["schemas"]["ProjectStatus"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description API is healthy */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description List of projects */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProjectListResponse"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['HealthResponse'];
         };
+      };
+      /** @description API is unhealthy */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
     };
-    createProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProjectRequest"];
-            };
-        };
-        responses: {
-            /** @description Project created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Project"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Project already exists */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
+  };
+  listProjects: {
+    parameters: {
+      query?: {
+        /** @description Maximum number of projects to return */
+        limit?: number;
+        /** @description Number of projects to skip */
+        offset?: number;
+        /** @description Filter projects by status */
+        status?: components['schemas']['ProjectStatus'];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    getProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Unique identifier for the project */
-                projectId: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description List of projects */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Project details */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Project"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Project not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['ProjectListResponse'];
         };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
     };
-    updateProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Unique identifier for the project */
-                projectId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateProjectRequest"];
-            };
-        };
-        responses: {
-            /** @description Project updated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Project"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Project not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
+  };
+  createProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    deleteProject: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Unique identifier for the project */
-                projectId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Project deleted successfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Project not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateProjectRequest'];
+      };
     };
-    listComponents: {
-        parameters: {
-            query?: {
-                /** @description Maximum number of components to return */
-                limit?: number;
-                /** @description Number of components to skip */
-                offset?: number;
-                /** @description Filter components by type */
-                type?: components["schemas"]["ComponentType"];
-            };
-            header?: never;
-            path: {
-                /** @description Unique identifier for the project */
-                projectId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Project created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description List of components */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ComponentListResponse"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Project not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['Project'];
         };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Project already exists */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
     };
-    createComponent: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Unique identifier for the project */
-                projectId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateComponentRequest"];
-            };
-        };
-        responses: {
-            /** @description Component created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Component"];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Project not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Component already exists */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
+  };
+  getProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Unique identifier for the project */
+        projectId: string;
+      };
+      cookie?: never;
     };
+    requestBody?: never;
+    responses: {
+      /** @description Project details */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Project'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Project not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  updateProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Unique identifier for the project */
+        projectId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateProjectRequest'];
+      };
+    };
+    responses: {
+      /** @description Project updated successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Project'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Project not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  deleteProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Unique identifier for the project */
+        projectId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Project deleted successfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Project not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  listComponents: {
+    parameters: {
+      query?: {
+        /** @description Maximum number of components to return */
+        limit?: number;
+        /** @description Number of components to skip */
+        offset?: number;
+        /** @description Filter components by type */
+        type?: components['schemas']['ComponentType'];
+      };
+      header?: never;
+      path: {
+        /** @description Unique identifier for the project */
+        projectId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description List of components */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ComponentListResponse'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Project not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  createComponent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Unique identifier for the project */
+        projectId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateComponentRequest'];
+      };
+    };
+    responses: {
+      /** @description Component created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['Component'];
+        };
+      };
+      /** @description Bad request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Unauthorized */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Project not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Component already exists */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+      /** @description Internal server error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
 }

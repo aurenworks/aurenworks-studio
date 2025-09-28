@@ -3,7 +3,9 @@
 > Builder Studio for the AurenWorks platform. Developers design Projects and Components, define/edit YAML, and publish to the runtime Portal.
 
 ## Tech decision (UI framework)
+
 We will use React + Vite + TypeScript with Tailwind + shadcn/ui (Radix primitives).
+
 - Why React/Vite? Fast DX, huge ecosystem, first-class support for Monaco (YAML editor), TanStack Query/Table, and excellent lib support.
 - Why shadcn/ui + Tailwind? Accessible primitives (Radix) with utility-first styling and quick customization.
 - Key libs
@@ -21,11 +23,13 @@ If we later need SSR/app router or auth pages out-of-the-box, we can consider Ne
 ## Getting started
 
 ### Prereqs
+
 - Node 18+ and pnpm (or npm/yarn)
 - AurenWorks API running locally (see aurenworks-infra compose or your local API)
 - OpenAPI spec from aurenworks-schemas/openapi/openapi.yaml
 
 ### Create the project
+
 ```bash
 pnpm create vite@latest aurenworks-studio --template react-ts
 cd aurenworks-studio
@@ -35,6 +39,7 @@ npx tailwindcss init -p
 ```
 
 Enable Tailwind in index.css:
+
 ```css
 @tailwind base;
 @tailwind components;
@@ -42,32 +47,39 @@ Enable Tailwind in index.css:
 ```
 
 ### (Temp) generate the OpenAPI client types
+
 Until the package is published, generate types locally from the schemas repo:
+
 ```bash
 pnpm openapi-typescript ../aurenworks-schemas/openapi/openapi.yaml -o src/lib/api/types.ts
 ```
+
 Set up a tiny client wrapper:
+
 ```ts
 // src/lib/api/client.ts
-import createClient from "openapi-fetch";
-import type { paths } from "./types";
+import createClient from 'openapi-fetch';
+import type { paths } from './types';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export const client = createClient<paths>({ baseUrl });
 
 export function authHeader() {
-  const t = localStorage.getItem("auth_token") ?? "";
+  const t = localStorage.getItem('auth_token') ?? '';
   return t ? { Authorization: `Bearer ${t}` } : {};
 }
 ```
 
 ### Env
+
 Create .env.local:
+
 ```
 VITE_API_BASE_URL=http://localhost:3000
 ```
 
 ### Scripts (package.json)
+
 ```jsonc
 {
   "scripts": {
@@ -75,14 +87,15 @@ VITE_API_BASE_URL=http://localhost:3000
     "dev": "pnpm client:gen && vite",
     "build": "pnpm client:gen && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
-  }
+    "test": "vitest run",
+  },
 }
 ```
 
 ---
 
 ## Project structure (suggested)
+
 ```
 src/
   app/                # routes/layout
@@ -102,6 +115,7 @@ public/
 ---
 
 ## Conventions
+
 - TypeScript only. No any; use zod or generated types for inputs.
 - Server state via React Query; keep global state minimal (Zustand optional).
 - Forms via RHF + zod resolver; display inline errors.
@@ -113,6 +127,7 @@ public/
 ---
 
 ## Roadmap (early)
+
 - Integrate generated TS client (Issue #14)
 - Projects list + create modal
 - Component designer (fields + YAML toggle)

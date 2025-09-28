@@ -1,19 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { client, authHeader } from "../../lib/api/client";
+import { useQuery } from '@tanstack/react-query';
+import { client, authHeader } from '../../lib/api/client';
+import type { components } from '../../lib/api/types';
 
-type Project = { id: string; name: string };
+type Project = components['schemas']['Project'];
 
 async function listProjects(): Promise<Project[]> {
-  const res = await client.GET("/projects", { headers: authHeader() });
+  const res = await client.GET('/projects', { headers: authHeader() });
   if (res.error) throw res.error;
-  // Adjust to res.data shape from your spec
-  return (res.data as any)?.items ?? (res.data as any) ?? [];
+  return res.data?.projects ?? [];
 }
 
 export default function ProjectsPage() {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["projects"],
-    queryFn: listProjects
+    queryKey: ['projects'],
+    queryFn: listProjects,
   });
 
   if (isLoading) return <div>Loading projects...</div>;
@@ -29,7 +29,7 @@ export default function ProjectsPage() {
           </tr>
         </thead>
         <tbody>
-          {(data ?? []).map((p) => (
+          {(data ?? []).map(p => (
             <tr key={p.id} className="border-t">
               <td className="p-2 font-mono text-xs">{p.id}</td>
               <td className="p-2">{p.name}</td>
