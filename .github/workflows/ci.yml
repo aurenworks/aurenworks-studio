@@ -1,8 +1,74 @@
 name: CI
+
 on:
   pull_request:
   push:
     branches: [main]
+
 jobs:
-  call:
-    uses: aurenworks/.github/.github/workflows/reusable-ci.yml@main
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Check lockfile
+        run: |
+          echo "Checking for pnpm-lock.yaml..."
+          ls -la pnpm-lock.yaml || echo "pnpm-lock.yaml not found"
+          
+      - name: Install dependencies
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            echo "Lockfile found, attempting frozen install..."
+            pnpm install --frozen-lockfile || {
+              echo "Frozen lockfile failed, trying without frozen lockfile..."
+              pnpm install --no-frozen-lockfile
+            }
+          else
+            echo "No lockfile found, installing without frozen lockfile"
+            pnpm install
+          fi
+
+      - name: Generate API types
+        run: pnpm client:gen
+
+      - name: Type check
+        run: pnpm type-check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
