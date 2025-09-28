@@ -1,0 +1,31 @@
+# Cursor Rules - aurenworks-studio
+
+## Goals
+- Keep the Studio fast, accessible, and contract-first (always use the generated OpenAPI client).
+- Enforce consistent patterns so multiple contributors (and AI) can ship safely.
+
+## Golden rules
+1) TypeScript strict. No any. Add missing types before merging.
+2) API calls only via src/lib/api/client.ts (+ generated types.ts).
+3) React Query for server state; no custom fetchers scattered in components.
+4) Forms use react-hook-form + zod. Show inline errors and disable-submit while invalid.
+5) Tables use @tanstack/react-table; virtualize long lists.
+6) Styling via Tailwind; components from shadcn/ui; icons from lucide-react.
+7) YAML edited in Monaco with validation/warnings (no blocking save unless critical).
+
+## File layout (enforced)
+- New features live under src/features/<feature>/ with routes, components, and a small api.ts that calls the shared client.
+- Shared UI goes in src/components/.
+- API types are generated to src/lib/api/types.ts; do not edit by hand.
+
+## Testing
+- Use Vitest + React Testing Library; at least one test per new feature.
+- Mock server calls at the boundary (mock the client methods).
+
+## Lint/format
+- Prettier + ESLint. Run before committing. CI will fail on style errors. 
+
+## PRs
+- Titles follow Conventional Commits.
+- Include Before/After screenshots for UI changes.
+- If a change adds API endpoints, update the client generation step and ensure types compile.
