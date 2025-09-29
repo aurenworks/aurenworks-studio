@@ -72,7 +72,9 @@ describe('RecordsPage', () => {
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.getAllByRole('heading', { name: 'Records' })).toHaveLength(2);
+      expect(screen.getAllByRole('heading', { name: 'Records' })).toHaveLength(
+        2
+      );
     });
 
     // Check that the component ID is displayed
