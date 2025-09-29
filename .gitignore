@@ -4,6 +4,10 @@ node_modules
 # builds
 dist
 
+# Vite
+.vite
+coverage
+
 # env
 .env*
 !.env.example
