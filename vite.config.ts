@@ -8,9 +8,15 @@ export default defineConfig({
     setupFiles: './vitest.setup.ts',
     globals: true,
   },
+  define: {
+    __TEST__: JSON.stringify(process.env.NODE_ENV === 'test'),
+    global: 'globalThis',
+  },
   resolve: {
     alias: {
-      'monaco-editor': './src/__mocks__/monaco-editor.js',
+      'monaco-editor': process.env.NODE_ENV === 'test' 
+        ? './src/__mocks__/monaco-editor.js' 
+        : 'monaco-editor',
     },
   },
   build: {
@@ -27,8 +33,5 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['monaco-editor'],
-  },
-  define: {
-    global: 'globalThis',
   },
 });
