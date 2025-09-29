@@ -20,6 +20,7 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
 }) => {
   // eslint-disable-next-line no-undef
   const editorRef = useRef<HTMLDivElement | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const monacoEditorRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +90,13 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
 
         // Configure YAML language features
         try {
-          if ((monaco.languages as any).yaml && (monaco.languages as any).yaml.yamlDefaults) {
+          if (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (monaco.languages as any).yaml &&
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (monaco.languages as any).yaml.yamlDefaults
+          ) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (monaco.languages as any).yaml.yamlDefaults.setDiagnosticsOptions({
               enableSchemaRequest: true,
               hover: true,
@@ -128,22 +135,30 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
             }
 
             // Register the schema
-            if ((monaco.languages as any).yaml && (monaco.languages as any).yaml.yamlDefaults) {
-              (monaco.languages as any).yaml.yamlDefaults.setDiagnosticsOptions({
-                enableSchemaRequest: true,
-                hover: true,
-                completion: true,
-                validate: true,
-                format: true,
-                isKubernetes: false,
-                schemas: [
-                  {
-                    uri: schemaUri,
-                    fileMatch: ['*'],
-                    schema: schemaContent,
-                  },
-                ],
-              });
+            if (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (monaco.languages as any).yaml &&
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (monaco.languages as any).yaml.yamlDefaults
+            ) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (monaco.languages as any).yaml.yamlDefaults.setDiagnosticsOptions(
+                {
+                  enableSchemaRequest: true,
+                  hover: true,
+                  completion: true,
+                  validate: true,
+                  format: true,
+                  isKubernetes: false,
+                  schemas: [
+                    {
+                      uri: schemaUri,
+                      fileMatch: ['*'],
+                      schema: schemaContent,
+                    },
+                  ],
+                }
+              );
             } else {
               // eslint-disable-next-line no-console
               console.warn(
