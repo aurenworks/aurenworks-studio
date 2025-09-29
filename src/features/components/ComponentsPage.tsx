@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { client, authHeader } from '../../lib/api/client';
 import type { components } from '../../lib/api/types';
+import ComponentDesignerModal from './ComponentDesignerModal';
 
 type Component = components['schemas']['Component'];
 
@@ -70,6 +72,9 @@ function getMockComponents(projectId: string): Component[] {
 }
 
 export default function ComponentsPage({ projectId }: ComponentsPageProps) {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingComponent, setEditingComponent] = useState<Component | null>(null);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['components', projectId],
     queryFn: () => listComponents(projectId),
@@ -97,11 +102,19 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
 
   return (
     <>
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-foreground">Components</h2>
-        <p className="text-sm text-foreground-secondary">
-          Project: {projectId}
-        </p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-semibold text-foreground">Components</h2>
+          <p className="text-sm text-foreground-secondary">
+            Project: {projectId}
+          </p>
+        </div>
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent/90 rounded-md transition-colors"
+        >
+          Create Component
+        </button>
       </div>
 
       <div className="card">
@@ -112,6 +125,7 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
               <th className="p-4 font-medium text-foreground">Name</th>
               <th className="p-4 font-medium text-foreground">Type</th>
               <th className="p-4 font-medium text-foreground">Status</th>
+              <th className="p-4 font-medium text-foreground">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -148,6 +162,14 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
                     {component.status}
                   </span>
                 </td>
+                <td className="p-4">
+                  <button
+                    onClick={() => setEditingComponent(component)}
+                    className="text-sm text-accent hover:text-accent/80 transition-colors"
+                  >
+                    Edit
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -159,6 +181,23 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
           </div>
         )}
       </div>
+
+      {/* Create Component Modal */}
+      <ComponentDesignerModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        projectId={projectId}
+      />
+
+      {/* Edit Component Modal */}
+      {editingComponent && (
+        <ComponentDesignerModal
+          isOpen={!!editingComponent}
+          onClose={() => setEditingComponent(null)}
+          component={editingComponent}
+          projectId={projectId}
+        />
+      )}
     </>
   );
 }

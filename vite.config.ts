@@ -7,6 +7,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
     globals: true,
+    deps: {
+      inline: ['monaco-editor'],
+    },
   },
   build: {
     rollupOptions: {
