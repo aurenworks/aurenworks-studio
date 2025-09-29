@@ -9,7 +9,9 @@ import RecordsRoute from './features/records/RecordsRoute';
 import './index.css';
 
 // Lazy load YamlPlayground to avoid Monaco editor import during tests
-const YamlPlayground = lazy(() => import('./features/components/YamlPlayground'));
+const YamlPlayground = lazy(
+  () => import('./features/components/YamlPlayground')
+);
 
 const router = createBrowserRouter([
   {
