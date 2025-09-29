@@ -36,15 +36,15 @@ function getMockProjects(): Project[] {
       id: 'proj-1',
       name: 'Sample Project',
       status: 'active',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
     {
       id: 'proj-2', 
       name: 'Another Project',
       status: 'inactive',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     },
   ];
 }

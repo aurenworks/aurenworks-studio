@@ -5,12 +5,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { X } from 'lucide-react';
 import { updateRecord } from './api';
-import type { Record, RecordField } from './types';
+import type { RecordData, RecordField } from './types';
 
 interface EditRecordModalProps {
   isOpen: boolean;
   onClose: () => void;
-  record: Record;
+  record: RecordData;
   fields: RecordField[];
 }
 
@@ -46,6 +46,17 @@ function createRecordSchema(fields: RecordField[]) {
   });
 
   return z.object(schemaFields);
+}
+
+// Helper function to extract error message
+function getErrorMessage(error: any): string {
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    return error.message;
+  }
+  return 'Invalid value';
 }
 
 export default function EditRecordModal({
@@ -172,7 +183,7 @@ export default function EditRecordModal({
 
               {errors[field.name] && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors[field.name]?.message}
+                  {getErrorMessage(errors[field.name])}
                 </p>
               )}
             </div>

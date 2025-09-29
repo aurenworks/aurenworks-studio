@@ -1,5 +1,5 @@
 // Mock types for records until they're added to the OpenAPI schema
-export interface Record {
+export interface RecordData {
   id: string;
   componentId: string;
   data: Record<string, unknown>;
@@ -25,7 +25,7 @@ export interface UpdateRecordRequest {
 }
 
 export interface RecordListResponse {
-  records: Record[];
+  records: RecordData[];
   total: number;
   limit: number;
   offset: number;

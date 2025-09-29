@@ -1,15 +1,15 @@
 import type {
-  Record,
+  RecordData,
   CreateRecordRequest,
   UpdateRecordRequest,
   RecordField,
 } from './types';
 
 // Mock API functions - these will be replaced with real endpoints when available
-export async function listRecords(componentId: string): Promise<Record[]> {
+export async function listRecords(componentId: string): Promise<RecordData[]> {
   // For now, return mock data
   // TODO: Replace with real API call when records endpoints are available
-  const mockRecords: Record[] = [
+  const mockRecords: RecordData[] = [
     {
       id: 'record-1',
       componentId,
@@ -41,10 +41,10 @@ export async function listRecords(componentId: string): Promise<Record[]> {
   return mockRecords;
 }
 
-export async function createRecord(data: CreateRecordRequest): Promise<Record> {
+export async function createRecord(data: CreateRecordRequest): Promise<RecordData> {
   // For now, return mock data
   // TODO: Replace with real API call when records endpoints are available
-  const mockRecord: Record = {
+  const mockRecord: RecordData = {
     id: `record-${Date.now()}`,
     componentId: data.componentId,
     data: data.data,
@@ -58,10 +58,10 @@ export async function createRecord(data: CreateRecordRequest): Promise<Record> {
 export async function updateRecord(
   recordId: string,
   data: UpdateRecordRequest
-): Promise<Record> {
+): Promise<RecordData> {
   // For now, return mock data
   // TODO: Replace with real API call when records endpoints are available
-  const mockRecord: Record = {
+  const mockRecord: RecordData = {
     id: recordId,
     componentId: 'mock-component',
     data: data.data,
@@ -72,7 +72,7 @@ export async function updateRecord(
   return mockRecord;
 }
 
-export async function deleteRecord(): Promise<void> {
+export async function deleteRecord(recordId: string): Promise<void> {
   // For now, just simulate success
   // TODO: Replace with real API call when records endpoints are available
   return Promise.resolve();

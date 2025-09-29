@@ -48,6 +48,17 @@ function createRecordSchema(fields: RecordField[]) {
   return z.object(schemaFields);
 }
 
+// Helper function to extract error message
+function getErrorMessage(error: any): string {
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    return error.message;
+  }
+  return 'Invalid value';
+}
+
 export default function CreateRecordModal({
   isOpen,
   onClose,
@@ -156,7 +167,7 @@ export default function CreateRecordModal({
 
               {errors[field.name] && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors[field.name]?.message}
+                  {getErrorMessage(errors[field.name])}
                 </p>
               )}
             </div>

@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { listRecords, deleteRecord, getComponentFields } from './api';
-import type { Record, RecordField } from './types';
+import type { RecordData, RecordField } from './types';
 import CreateRecordModal from './CreateRecordModal';
 import EditRecordModal from './EditRecordModal';
 
@@ -16,11 +16,11 @@ interface RecordsPageProps {
   componentId: string;
 }
 
-const columnHelper = createColumnHelper<Record>();
+const columnHelper = createColumnHelper<RecordData>();
 
 export default function RecordsPage({ componentId }: RecordsPageProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<Record | null>(null);
+  const [editingRecord, setEditingRecord] = useState<RecordData | null>(null);
   const queryClient = useQueryClient();
 
   const {
