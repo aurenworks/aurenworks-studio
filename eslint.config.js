@@ -106,6 +106,7 @@ export default [
       '*.config.js',
       '*.config.ts',
       'aurenworks-schemas/**',
+      'src/lib/api/types.ts', // Generated file, should not be linted
     ],
   },
 ];
