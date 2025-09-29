@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import ProjectsPage from './features/projects/ProjectsPage';
 import ComponentsRoute from './features/components/ComponentsRoute';
+import RecordsRoute from './features/records/RecordsRoute';
 
 export default function App() {
   return (
@@ -14,6 +15,9 @@ export default function App() {
             </Link>
             <Link to="/components/test-project" className="hover:underline">
               Components
+            </Link>
+            <Link to="/records/test-component" className="hover:underline">
+              Records
             </Link>
           </nav>
         </header>
@@ -34,6 +38,15 @@ export default function App() {
                 <section>
                   <h2 className="text-xl font-medium">Components</h2>
                   <ComponentsRoute />
+                </section>
+              }
+            />
+            <Route
+              path="/records/:componentId"
+              element={
+                <section>
+                  <h2 className="text-xl font-medium">Records</h2>
+                  <RecordsRoute />
                 </section>
               }
             />
