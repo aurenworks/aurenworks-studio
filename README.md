@@ -37,6 +37,7 @@ The application includes mock data for development when no backend is available:
 - **Records Page**: Will show mock records (when implemented)
 
 To use with a real backend:
+
 1. Set `VITE_API_BASE_URL` environment variable (e.g., `http://localhost:8080`)
 2. Set authentication token in browser: `localStorage.setItem('auth_token', 'your-token')`
 

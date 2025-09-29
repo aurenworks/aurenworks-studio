@@ -1,15 +1,15 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
-  theme: { 
+  theme: {
     extend: {
       colors: {
         // AurenWorks Brand Colors
         auren: {
-          gold: '#FFD166',      // Primary "Auren Gold" - Warm golden-yellow
-          slate: '#2F2F3A',     // Secondary Deep Slate - Dark neutral
-          ember: '#F25C54',     // Accent Ember - Fiery accent
-          sky: '#06AED5',       // Accent Sky - Cool counterpoint
+          gold: '#FFD166', // Primary "Auren Gold" - Warm golden-yellow
+          slate: '#2F2F3A', // Secondary Deep Slate - Dark neutral
+          ember: '#F25C54', // Accent Ember - Fiery accent
+          sky: '#06AED5', // Accent Sky - Cool counterpoint
         },
         // Semantic color mappings
         primary: {
@@ -59,10 +59,12 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'auren': '0 4px 6px -1px rgba(47, 47, 58, 0.1), 0 2px 4px -1px rgba(47, 47, 58, 0.06)',
-        'auren-lg': '0 10px 15px -3px rgba(47, 47, 58, 0.1), 0 4px 6px -2px rgba(47, 47, 58, 0.05)',
+        auren:
+          '0 4px 6px -1px rgba(47, 47, 58, 0.1), 0 2px 4px -1px rgba(47, 47, 58, 0.06)',
+        'auren-lg':
+          '0 10px 15px -3px rgba(47, 47, 58, 0.1), 0 4px 6px -2px rgba(47, 47, 58, 0.05)',
       },
-    }
+    },
   },
   plugins: [],
 };
