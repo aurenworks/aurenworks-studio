@@ -28,6 +28,19 @@ If we later need SSR/app router or auth pages out-of-the-box, we can consider Ne
 - AurenWorks API running locally (see aurenworks-infra compose or your local API)
 - OpenAPI spec from aurenworks-schemas/openapi/openapi.yaml
 
+### Development without Backend
+
+The application includes mock data for development when no backend is available:
+
+- **Projects Page**: Shows sample projects with mock data
+- **Components Page**: Will show mock components (when implemented)
+- **Records Page**: Will show mock records (when implemented)
+
+To use with a real backend:
+
+1. Set `VITE_API_BASE_URL` environment variable (e.g., `http://localhost:8080`)
+2. Set authentication token in browser: `localStorage.setItem('auth_token', 'your-token')`
+
 ### Create the project
 
 ```bash

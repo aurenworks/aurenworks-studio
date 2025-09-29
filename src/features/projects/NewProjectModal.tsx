@@ -51,13 +51,18 @@ export default function NewProjectModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Create New Project</h2>
+    <div className="fixed inset-0 bg-background-dark/50 flex items-center justify-center z-50">
+      <div className="card p-6 w-full max-w-md shadow-auren-lg">
+        <h2 className="text-xl font-semibold mb-4 text-foreground">
+          Create New Project
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
               Project Name *
             </label>
             <input
@@ -65,7 +70,7 @@ export default function NewProjectModal({
               type="text"
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="input w-full"
               required
             />
           </div>
@@ -73,7 +78,7 @@ export default function NewProjectModal({
           <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium mb-1"
+              className="block text-sm font-medium mb-1 text-foreground"
             >
               Description
             </label>
@@ -83,23 +88,23 @@ export default function NewProjectModal({
               onChange={e =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full border border-gray-300 rounded px-3 py-2"
+              className="input w-full"
               rows={3}
             />
           </div>
 
-          <div className="flex gap-2 pt-4">
+          <div className="flex gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              className="btn-outline flex-1"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createMutation.isPending || !formData.name.trim()}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className="btn-primary flex-1 disabled:opacity-50"
             >
               {createMutation.isPending ? 'Creating...' : 'Create Project'}
             </button>
@@ -107,7 +112,7 @@ export default function NewProjectModal({
         </form>
 
         {createMutation.error && (
-          <div className="mt-4 text-red-600 text-sm">
+          <div className="mt-4 text-error text-sm">
             Failed to create project: {createMutation.error.message}
           </div>
         )}
