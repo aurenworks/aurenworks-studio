@@ -112,7 +112,9 @@ describe('ComponentsPage', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText('No components found for this project.')).toBeInTheDocument();
+      expect(
+        screen.getByText('No components found for this project.')
+      ).toBeInTheDocument();
     });
   });
 });

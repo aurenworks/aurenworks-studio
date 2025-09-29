@@ -41,7 +41,7 @@ jobs:
         run: |
           echo "Checking for pnpm-lock.yaml..."
           ls -la pnpm-lock.yaml || echo "pnpm-lock.yaml not found"
-          
+
       - name: Install dependencies
         run: |
           if [ -f pnpm-lock.yaml ]; then

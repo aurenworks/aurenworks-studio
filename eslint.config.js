@@ -76,6 +76,21 @@ export default [
       '**/*.spec.{js,jsx,ts,tsx}',
       '**/test/**/*',
     ],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+        vi: 'readonly',
+        Response: 'readonly',
+      },
+    },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
@@ -90,6 +105,7 @@ export default [
       'coverage/**',
       '*.config.js',
       '*.config.ts',
+      'aurenworks-schemas/**',
     ],
   },
 ];

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { client, authHeader } from '../../lib/api/client';
 import type { components } from '../../lib/api/types';
@@ -17,10 +17,14 @@ async function createProject(data: CreateProjectRequest): Promise<Project> {
     headers: authHeader(),
   });
   if (res.error) throw res.error;
-  return res.data!;
+  if (!res.data) throw new Error('No data returned from API');
+  return res.data;
 }
 
-export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProps) {
+export default function NewProjectModal({
+  isOpen,
+  onClose,
+}: NewProjectModalProps) {
   const [formData, setFormData] = useState<CreateProjectRequest>({
     name: '',
     description: '',
@@ -50,7 +54,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-semibold mb-4">Create New Project</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1">
@@ -60,25 +64,30 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               id="name"
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               className="w-full border border-gray-300 rounded px-3 py-2"
               required
             />
           </div>
-          
+
           <div>
-            <label htmlFor="description" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium mb-1"
+            >
               Description
             </label>
             <textarea
               id="description"
               value={formData.description || ''}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               className="w-full border border-gray-300 rounded px-3 py-2"
               rows={3}
             />
           </div>
-          
+
           <div className="flex gap-2 pt-4">
             <button
               type="button"
@@ -96,7 +105,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             </button>
           </div>
         </form>
-        
+
         {createMutation.error && (
           <div className="mt-4 text-red-600 text-sm">
             Failed to create project: {createMutation.error.message}

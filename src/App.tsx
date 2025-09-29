@@ -9,24 +9,34 @@ export default function App() {
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">AurenWorks Studio</h1>
           <nav className="text-sm opacity-80 space-x-4">
-            <Link to="/" className="hover:underline">Projects</Link>
-            <Link to="/components/test-project" className="hover:underline">Components</Link>
+            <Link to="/" className="hover:underline">
+              Projects
+            </Link>
+            <Link to="/components/test-project" className="hover:underline">
+              Components
+            </Link>
           </nav>
         </header>
         <main className="space-y-8">
           <Routes>
-            <Route path="/" element={
-              <section>
-                <h2 className="text-xl font-medium">Projects</h2>
-                <ProjectsPage />
-              </section>
-            } />
-            <Route path="/components/:projectId" element={
-              <section>
-                <h2 className="text-xl font-medium">Components</h2>
-                <ComponentsRoute />
-              </section>
-            } />
+            <Route
+              path="/"
+              element={
+                <section>
+                  <h2 className="text-xl font-medium">Projects</h2>
+                  <ProjectsPage />
+                </section>
+              }
+            />
+            <Route
+              path="/components/:projectId"
+              element={
+                <section>
+                  <h2 className="text-xl font-medium">Components</h2>
+                  <ComponentsRoute />
+                </section>
+              }
+            />
           </Routes>
         </main>
       </div>

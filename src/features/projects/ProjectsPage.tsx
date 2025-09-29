@@ -33,7 +33,7 @@ export default function ProjectsPage() {
           New Project
         </button>
       </div>
-      
+
       <div className="rounded-xl border bg-white">
         <table className="w-full text-sm">
           <thead className="bg-gray-100 text-left">
@@ -49,11 +49,15 @@ export default function ProjectsPage() {
                 <td className="p-2 font-mono text-xs">{p.id}</td>
                 <td className="p-2">{p.name}</td>
                 <td className="p-2">
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    p.status === 'active' ? 'bg-green-100 text-green-800' :
-                    p.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`px-2 py-1 rounded text-xs ${
+                      p.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : p.status === 'inactive'
+                          ? 'bg-gray-100 text-gray-800'
+                          : 'bg-red-100 text-red-800'
+                    }`}
+                  >
                     {p.status}
                   </span>
                 </td>
@@ -62,7 +66,7 @@ export default function ProjectsPage() {
           </tbody>
         </table>
       </div>
-      
+
       <NewProjectModal
         isOpen={isNewProjectModalOpen}
         onClose={() => setIsNewProjectModalOpen(false)}
