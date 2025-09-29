@@ -55,6 +55,13 @@ jobs:
             pnpm install
           fi
 
+      - name: Checkout aurenworks-schemas
+        uses: actions/checkout@v5
+        with:
+          repository: aurenworks/aurenworks-schemas
+          path: aurenworks-schemas
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate API types
         run: pnpm client:gen
 
