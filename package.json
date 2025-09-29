@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "client:gen": "openapi-typescript ../aurenworks-schemas/openapi/control-plane-v0.yaml -o src/lib/api/types.ts",
+    "client:gen:ci": "pnpm client:gen || echo 'Client generation failed, using existing types.ts'",
     "dev": "pnpm client:gen && vite",
     "build": "pnpm client:gen && vite build",
+    "build:ci": "pnpm client:gen:ci && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

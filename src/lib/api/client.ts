@@ -13,3 +13,10 @@ export function authHeader() {
       : '';
   return t ? { Authorization: `Bearer ${t}` } : {};
 }
+
+// Helper to make authenticated requests
+export async function authenticatedRequest<T>(
+  requestFn: () => Promise<T>
+): Promise<T> {
+  return requestFn();
+}

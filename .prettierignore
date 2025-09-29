@@ -10,3 +10,5 @@ coverage/
 .idea/
 *.min.js
 *.min.css
+src/lib/api/types.ts
+aurenworks-schemas/
