@@ -3,5 +3,106 @@
 @tailwind utilities;
 
 :root {
-  --aw-accent: 38 92% 50%;
+  /* AurenWorks Brand Colors */
+  --auren-gold: #FFD166;
+  --auren-slate: #2F2F3A;
+  --auren-ember: #F25C54;
+  --auren-sky: #06AED5;
+  
+  /* Semantic color variables */
+  --color-primary: var(--auren-gold);
+  --color-primary-foreground: var(--auren-slate);
+  --color-secondary: var(--auren-slate);
+  --color-secondary-foreground: #FFFFFF;
+  --color-accent: var(--auren-ember);
+  --color-accent-secondary: var(--auren-sky);
+  --color-accent-foreground: #FFFFFF;
+  
+  /* Background colors */
+  --color-background: #FFFFFF;
+  --color-background-secondary: #F8F9FA;
+  --color-background-dark: var(--auren-slate);
+  
+  /* Text colors */
+  --color-foreground: var(--auren-slate);
+  --color-foreground-secondary: #6B7280;
+  --color-foreground-muted: #9CA3AF;
+  
+  /* Border colors */
+  --color-border: #E5E7EB;
+  --color-border-secondary: #D1D5DB;
+  
+  /* Status colors */
+  --color-success: #10B981;
+  --color-success-background: #D1FAE5;
+  --color-success-foreground: #065F46;
+  --color-warning: #F59E0B;
+  --color-warning-background: #FEF3C7;
+  --color-warning-foreground: #92400E;
+  --color-error: #EF4444;
+  --color-error-background: #FEE2E2;
+  --color-error-foreground: #991B1B;
+}
+
+/* Base styles with AurenWorks theme */
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground font-semibold;
+  }
+  
+  a {
+    @apply text-accent hover:text-accent/80 transition-colors;
+  }
+  
+  button {
+    @apply transition-all duration-200;
+  }
+}
+
+/* Component styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .btn-outline {
+    @apply border border-border hover:bg-background-secondary px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .card {
+    @apply bg-background border border-border rounded-lg shadow-auren;
+  }
+  
+  .input {
+    @apply border border-border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent;
+  }
+  
+  .status-active {
+    @apply bg-success-background text-success-foreground px-2 py-1 rounded text-xs;
+  }
+  
+  .status-inactive {
+    @apply bg-foreground-muted/20 text-foreground-muted px-2 py-1 rounded text-xs;
+  }
+  
+  .status-error {
+    @apply bg-error-background text-error-foreground px-2 py-1 rounded text-xs;
+  }
+  
+  .status-warning {
+    @apply bg-warning-background text-warning-foreground px-2 py-1 rounded text-xs;
+  }
 }

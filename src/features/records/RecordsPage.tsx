@@ -49,7 +49,7 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
     columnHelper.accessor('id', {
       header: 'ID',
       cell: info => (
-        <span className="font-mono text-xs text-gray-600">
+        <span className="font-mono text-xs text-foreground-secondary">
           {info.getValue()}
         </span>
       ),
@@ -65,7 +65,7 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
           }
           if (field.type === 'select' && value) {
             return (
-              <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+              <span className="px-2 py-1 bg-accent-secondary/10 text-accent-secondary rounded text-xs font-medium">
                 {value as string}
               </span>
             );
@@ -82,14 +82,14 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
         <div className="flex space-x-2">
           <button
             onClick={() => setEditingRecord(info.row.original)}
-            className="p-1 text-gray-600 hover:text-blue-600"
+            className="p-1 text-foreground-secondary hover:text-accent transition-colors"
             title="Edit record"
           >
             <Edit className="h-4 w-4" />
           </button>
           <button
             onClick={() => deleteRecordMutation.mutate(info.row.original.id)}
-            className="p-1 text-gray-600 hover:text-red-600"
+            className="p-1 text-foreground-secondary hover:text-error transition-colors"
             title="Delete record"
             disabled={deleteRecordMutation.isPending}
           >
@@ -109,7 +109,7 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-gray-600">Loading records...</div>
+        <div className="text-foreground-secondary">Loading records...</div>
       </div>
     );
   }
@@ -117,23 +117,27 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
   if (error) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="text-red-600">Failed to load records</div>
+        <div className="text-error">Failed to load records</div>
       </div>
     );
   }
 
   return (
     <>
-      <div className="rounded-xl border bg-white">
-        <div className="p-4 border-b">
+      <div className="mb-6">
+        <h2 className="text-2xl font-semibold text-foreground">Records</h2>
+        <p className="text-sm text-foreground-secondary">Component: {componentId}</p>
+      </div>
+
+      <div className="card">
+        <div className="p-4 border-b border-border">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-medium">Records</h3>
-              <p className="text-sm text-gray-600">Component: {componentId}</p>
+              <h3 className="text-lg font-medium text-foreground">Records</h3>
             </div>
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="btn-primary flex items-center space-x-2"
             >
               <Plus className="h-4 w-4" />
               <span>New Record</span>
@@ -142,7 +146,7 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
         </div>
 
         {records && records.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-foreground-muted">
             <div className="text-lg font-medium mb-2">No records found</div>
             <div className="text-sm">
               Create your first record to get started.
@@ -151,11 +155,11 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 text-left">
+              <thead className="bg-background-secondary text-left">
                 {table.getHeaderGroups().map(headerGroup => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map(header => (
-                      <th key={header.id} className="p-2 font-medium">
+                      <th key={header.id} className="p-4 font-medium text-foreground">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -169,9 +173,9 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
               </thead>
               <tbody>
                 {table.getRowModel().rows.map(row => (
-                  <tr key={row.id} className="border-t hover:bg-gray-50">
+                  <tr key={row.id} className="border-t border-border hover:bg-background-secondary/50 transition-colors">
                     {row.getVisibleCells().map(cell => (
-                      <td key={cell.id} className="p-2">
+                      <td key={cell.id} className="p-4">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
