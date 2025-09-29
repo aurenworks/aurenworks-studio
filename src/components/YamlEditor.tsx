@@ -88,14 +88,24 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
         });
 
         // Configure YAML language features
-        monaco.languages.yaml.yamlDefaults.setDiagnosticsOptions({
-          enableSchemaRequest: true,
-          hover: true,
-          completion: true,
-          validate: true,
-          format: true,
-          isKubernetes: false,
-        });
+        try {
+          if (monaco.languages.yaml && monaco.languages.yaml.yamlDefaults) {
+            monaco.languages.yaml.yamlDefaults.setDiagnosticsOptions({
+              enableSchemaRequest: true,
+              hover: true,
+              completion: true,
+              validate: true,
+              format: true,
+              isKubernetes: false,
+            });
+          } else {
+            // eslint-disable-next-line no-console
+            console.warn('YAML language support not available in Monaco Editor');
+          }
+        } catch (err) {
+          // eslint-disable-next-line no-console
+          console.warn('Failed to configure YAML language features:', err);
+        }
 
         // Set up schema validation if provided
         if (schema) {
@@ -116,21 +126,26 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
             }
 
             // Register the schema
-            monaco.languages.yaml.yamlDefaults.setDiagnosticsOptions({
-              enableSchemaRequest: true,
-              hover: true,
-              completion: true,
-              validate: true,
-              format: true,
-              isKubernetes: false,
-              schemas: [
-                {
-                  uri: schemaUri,
-                  fileMatch: ['*'],
-                  schema: schemaContent,
-                },
-              ],
-            });
+            if (monaco.languages.yaml && monaco.languages.yaml.yamlDefaults) {
+              monaco.languages.yaml.yamlDefaults.setDiagnosticsOptions({
+                enableSchemaRequest: true,
+                hover: true,
+                completion: true,
+                validate: true,
+                format: true,
+                isKubernetes: false,
+                schemas: [
+                  {
+                    uri: schemaUri,
+                    fileMatch: ['*'],
+                    schema: schemaContent,
+                  },
+                ],
+              });
+            } else {
+              // eslint-disable-next-line no-console
+              console.warn('Schema validation not available - YAML language support not loaded');
+            }
           } catch (err) {
             // eslint-disable-next-line no-console
             console.warn('Failed to load schema:', err);
