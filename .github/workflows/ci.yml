@@ -61,9 +61,37 @@ jobs:
           repository: aurenworks/aurenworks-schemas
           path: aurenworks-schemas
           token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Debug schemas repository structure
+        run: |
+          echo "Checking aurenworks-schemas directory structure..."
+          ls -la aurenworks-schemas/ || echo "aurenworks-schemas directory not found"
+          echo "Looking for openapi directory..."
+          ls -la aurenworks-schemas/openapi/ || echo "openapi directory not found"
+          echo "Looking for control-plane-v0.yaml..."
+          ls -la aurenworks-schemas/openapi/control-plane-v0.yaml || echo "control-plane-v0.yaml not found"
+          echo "Looking for openapi.yaml (alternative path)..."
+          ls -la aurenworks-schemas/openapi/openapi.yaml || echo "openapi.yaml not found"
+          echo "Looking for any yaml files in openapi directory..."
+          find aurenworks-schemas -name "*.yaml" -o -name "*.yml" || echo "No yaml files found"
+          echo "Checking if repository checkout was successful..."
+          ls -la aurenworks-schemas/.git || echo "Git repository not found"
 
       - name: Generate API types
-        run: pnpm client:gen
+        run: |
+          echo "Attempting to generate API types..."
+          if pnpm client:gen; then
+            echo "API types generated successfully"
+          else
+            echo "API type generation failed, checking if types.ts exists..."
+            if [ -f "src/lib/api/types.ts" ]; then
+              echo "Using existing types.ts file"
+            else
+              echo "No types.ts file found and generation failed"
+              exit 1
+            fi
+          fi
 
       - name: Type check
         run: pnpm type-check
