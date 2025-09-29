@@ -139,6 +139,38 @@ public/
 
 ---
 
+## YAML Editor
+
+The studio includes a Monaco-based YAML editor with schema validation:
+
+### Usage
+
+```tsx
+import { YamlEditor } from './components/YamlEditor';
+
+<YamlEditor
+  value={yamlContent}
+  onChange={setYamlContent}
+  schema={componentSchema} // Optional: JSON schema object or URL
+  readOnly={false}
+  height="400px"
+  className="border rounded"
+/>;
+```
+
+### Features
+
+- **Syntax Highlighting**: YAML syntax highlighting with proper color coding
+- **Schema Validation**: Real-time validation against JSON schema
+- **Auto-completion**: Intelligent code completion and suggestions
+- **Error Highlighting**: Inline error markers and diagnostics
+- **Formatting**: Auto-format YAML content on paste and type
+- **Accessibility**: Keyboard navigation and screen reader support
+
+### Demo
+
+Visit `/yaml-playground` to see the editor in action with a sample component schema.
+
 ## Roadmap (early)
 
 - Integrate generated TS client (Issue #14)

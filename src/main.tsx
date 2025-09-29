@@ -6,6 +6,7 @@ import App from './App';
 import ProjectsPage from './features/projects/ProjectsPage';
 import ComponentsRoute from './features/components/ComponentsRoute';
 import RecordsRoute from './features/records/RecordsRoute';
+import YamlPlayground from './features/components/YamlPlayground';
 import './index.css';
 
 const router = createBrowserRouter([
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: 'records/:componentId',
         element: <RecordsRoute />,
+      },
+      {
+        path: 'yaml-playground',
+        element: <YamlPlayground />,
       },
     ],
   },
