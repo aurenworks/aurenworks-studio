@@ -53,11 +53,16 @@ export default function NewProjectModal({
   return (
     <div className="fixed inset-0 bg-background-dark/50 flex items-center justify-center z-50">
       <div className="card p-6 w-full max-w-md shadow-auren-lg">
-        <h2 className="text-xl font-semibold mb-4 text-foreground">Create New Project</h2>
+        <h2 className="text-xl font-semibold mb-4 text-foreground">
+          Create New Project
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1 text-foreground">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
               Project Name *
             </label>
             <input

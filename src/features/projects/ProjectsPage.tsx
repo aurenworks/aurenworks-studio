@@ -9,22 +9,22 @@ type Project = components['schemas']['Project'];
 async function listProjects(): Promise<Project[]> {
   // For development: return mock data if no backend is available
   const isDevelopment = import.meta.env.DEV;
-  
+
   if (isDevelopment) {
     // Check if we can reach the API
     try {
       const res = await client.GET('/projects', { headers: authHeader() });
       if (res.error) {
-        console.warn('API not available, using mock data:', res.error);
+        // API not available, using mock data
         return getMockProjects();
       }
       return res.data?.projects ?? [];
-    } catch (error) {
-      console.warn('API not available, using mock data:', error);
+    } catch {
+      // API not available, using mock data
       return getMockProjects();
     }
   }
-  
+
   const res = await client.GET('/projects', { headers: authHeader() });
   if (res.error) throw res.error;
   return res.data?.projects ?? [];
@@ -40,7 +40,7 @@ function getMockProjects(): Project[] {
       updatedAt: new Date().toISOString(),
     },
     {
-      id: 'proj-2', 
+      id: 'proj-2',
       name: 'Another Project',
       status: 'inactive',
       createdAt: new Date().toISOString(),
@@ -56,21 +56,21 @@ export default function ProjectsPage() {
     queryFn: listProjects,
   });
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center py-8">
-      <div className="text-foreground-secondary">Loading projects...</div>
-    </div>
-  );
-  
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-foreground-secondary">Loading projects...</div>
+      </div>
+    );
+
   if (error) {
     return (
       <div className="text-error space-y-2">
         <div className="font-medium">Failed to load projects</div>
         <div className="text-sm text-foreground-secondary">
-          {import.meta.env.DEV 
-            ? "Development mode: Check console for details. Using mock data if available."
-            : "Please check your connection and try again."
-          }
+          {import.meta.env.DEV
+            ? 'Development mode: Check console for details. Using mock data if available.'
+            : 'Please check your connection and try again.'}
         </div>
       </div>
     );
@@ -99,8 +99,13 @@ export default function ProjectsPage() {
           </thead>
           <tbody>
             {(data ?? []).map(p => (
-              <tr key={p.id} className="border-t border-border hover:bg-background-secondary/50 transition-colors">
-                <td className="p-4 font-mono text-xs text-foreground-secondary">{p.id}</td>
+              <tr
+                key={p.id}
+                className="border-t border-border hover:bg-background-secondary/50 transition-colors"
+              >
+                <td className="p-4 font-mono text-xs text-foreground-secondary">
+                  {p.id}
+                </td>
                 <td className="p-4 font-medium text-foreground">{p.name}</td>
                 <td className="p-4">
                   <span

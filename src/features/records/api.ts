@@ -41,7 +41,9 @@ export async function listRecords(componentId: string): Promise<RecordData[]> {
   return mockRecords;
 }
 
-export async function createRecord(data: CreateRecordRequest): Promise<RecordData> {
+export async function createRecord(
+  data: CreateRecordRequest
+): Promise<RecordData> {
   // For now, return mock data
   // TODO: Replace with real API call when records endpoints are available
   const mockRecord: RecordData = {
@@ -72,7 +74,8 @@ export async function updateRecord(
   return mockRecord;
 }
 
-export async function deleteRecord(recordId: string): Promise<void> {
+// eslint-disable-next-line no-unused-vars
+export async function deleteRecord(_recordId: string): Promise<void> {
   // For now, just simulate success
   // TODO: Replace with real API call when records endpoints are available
   return Promise.resolve();

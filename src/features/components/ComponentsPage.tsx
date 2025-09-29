@@ -11,7 +11,7 @@ interface ComponentsPageProps {
 async function listComponents(projectId: string): Promise<Component[]> {
   // For development: return mock data if no backend is available
   const isDevelopment = import.meta.env.DEV;
-  
+
   if (isDevelopment) {
     try {
       const res = await client.GET('/projects/{projectId}/components', {
@@ -19,16 +19,16 @@ async function listComponents(projectId: string): Promise<Component[]> {
         headers: authHeader(),
       });
       if (res.error) {
-        console.warn('API not available, using mock data:', res.error);
+        // API not available, using mock data
         return getMockComponents(projectId);
       }
       return res.data?.components ?? [];
-    } catch (error) {
-      console.warn('API not available, using mock data:', error);
+    } catch {
+      // API not available, using mock data
       return getMockComponents(projectId);
     }
   }
-  
+
   const res = await client.GET('/projects/{projectId}/components', {
     params: { path: { projectId } },
     headers: authHeader(),
@@ -75,21 +75,21 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
     queryFn: () => listComponents(projectId),
   });
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center py-8">
-      <div className="text-foreground-secondary">Loading components...</div>
-    </div>
-  );
-  
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-foreground-secondary">Loading components...</div>
+      </div>
+    );
+
   if (error) {
     return (
       <div className="text-error space-y-2">
         <div className="font-medium">Failed to load components</div>
         <div className="text-sm text-foreground-secondary">
-          {import.meta.env.DEV 
-            ? "Development mode: Check console for details. Using mock data if available."
-            : "Please check your connection and try again."
-          }
+          {import.meta.env.DEV
+            ? 'Development mode: Check console for details. Using mock data if available.'
+            : 'Please check your connection and try again.'}
         </div>
       </div>
     );
@@ -99,7 +99,9 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
     <>
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-foreground">Components</h2>
-        <p className="text-sm text-foreground-secondary">Project: {projectId}</p>
+        <p className="text-sm text-foreground-secondary">
+          Project: {projectId}
+        </p>
       </div>
 
       <div className="card">
@@ -114,9 +116,16 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
           </thead>
           <tbody>
             {(data ?? []).map(component => (
-              <tr key={component.id} className="border-t border-border hover:bg-background-secondary/50 transition-colors">
-                <td className="p-4 font-mono text-xs text-foreground-secondary">{component.id}</td>
-                <td className="p-4 font-medium text-foreground">{component.name}</td>
+              <tr
+                key={component.id}
+                className="border-t border-border hover:bg-background-secondary/50 transition-colors"
+              >
+                <td className="p-4 font-mono text-xs text-foreground-secondary">
+                  {component.id}
+                </td>
+                <td className="p-4 font-medium text-foreground">
+                  {component.name}
+                </td>
                 <td className="p-4">
                   <span className="px-2 py-1 bg-accent-secondary/10 text-accent-secondary rounded text-xs font-medium">
                     {component.type}

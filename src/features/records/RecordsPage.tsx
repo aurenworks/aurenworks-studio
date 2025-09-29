@@ -126,7 +126,9 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
     <>
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-foreground">Records</h2>
-        <p className="text-sm text-foreground-secondary">Component: {componentId}</p>
+        <p className="text-sm text-foreground-secondary">
+          Component: {componentId}
+        </p>
       </div>
 
       <div className="card">
@@ -159,7 +161,10 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
                 {table.getHeaderGroups().map(headerGroup => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map(header => (
-                      <th key={header.id} className="p-4 font-medium text-foreground">
+                      <th
+                        key={header.id}
+                        className="p-4 font-medium text-foreground"
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -173,7 +178,10 @@ export default function RecordsPage({ componentId }: RecordsPageProps) {
               </thead>
               <tbody>
                 {table.getRowModel().rows.map(row => (
-                  <tr key={row.id} className="border-t border-border hover:bg-background-secondary/50 transition-colors">
+                  <tr
+                    key={row.id}
+                    className="border-t border-border hover:bg-background-secondary/50 transition-colors"
+                  >
                     {row.getVisibleCells().map(cell => (
                       <td key={cell.id} className="p-4">
                         {flexRender(

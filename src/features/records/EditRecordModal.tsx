@@ -49,12 +49,12 @@ function createRecordSchema(fields: RecordField[]) {
 }
 
 // Helper function to extract error message
-function getErrorMessage(error: any): string {
+function getErrorMessage(error: unknown): string {
   if (typeof error === 'string') {
     return error;
   }
   if (error && typeof error === 'object' && 'message' in error) {
-    return error.message;
+    return (error as { message: string }).message;
   }
   return 'Invalid value';
 }
