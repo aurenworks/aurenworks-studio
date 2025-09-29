@@ -20,7 +20,7 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
 }) => {
   // eslint-disable-next-line no-undef
   const editorRef = useRef<HTMLDivElement | null>(null);
-  const monacoEditorRef = useRef<unknown>(null);
+  const monacoEditorRef = useRef<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
         // Configure Monaco environment for web workers
         if (typeof window !== 'undefined') {
           // Set up web worker for Monaco
-          (window as Record<string, unknown>).MonacoEnvironment = {
+          (window as unknown as Record<string, unknown>).MonacoEnvironment = {
             getWorkerUrl: function (moduleId: string, label: string) {
               if (label === 'json') {
                 return '/node_modules/monaco-editor/esm/vs/language/json/json.worker.js';
@@ -89,8 +89,8 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
 
         // Configure YAML language features
         try {
-          if (monaco.languages.yaml && monaco.languages.yaml.yamlDefaults) {
-            monaco.languages.yaml.yamlDefaults.setDiagnosticsOptions({
+          if ((monaco.languages as any).yaml && (monaco.languages as any).yaml.yamlDefaults) {
+            (monaco.languages as any).yaml.yamlDefaults.setDiagnosticsOptions({
               enableSchemaRequest: true,
               hover: true,
               completion: true,
@@ -100,7 +100,9 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
             });
           } else {
             // eslint-disable-next-line no-console
-            console.warn('YAML language support not available in Monaco Editor');
+            console.warn(
+              'YAML language support not available in Monaco Editor'
+            );
           }
         } catch (err) {
           // eslint-disable-next-line no-console
@@ -126,8 +128,8 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
             }
 
             // Register the schema
-            if (monaco.languages.yaml && monaco.languages.yaml.yamlDefaults) {
-              monaco.languages.yaml.yamlDefaults.setDiagnosticsOptions({
+            if ((monaco.languages as any).yaml && (monaco.languages as any).yaml.yamlDefaults) {
+              (monaco.languages as any).yaml.yamlDefaults.setDiagnosticsOptions({
                 enableSchemaRequest: true,
                 hover: true,
                 completion: true,
@@ -144,7 +146,9 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
               });
             } else {
               // eslint-disable-next-line no-console
-              console.warn('Schema validation not available - YAML language support not loaded');
+              console.warn(
+                'Schema validation not available - YAML language support not loaded'
+              );
             }
           } catch (err) {
             // eslint-disable-next-line no-console
@@ -180,18 +184,14 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
       (monacoEditorRef.current as { getValue: () => string }).getValue() !==
         value
     ) {
-      (monacoEditorRef.current as { setValue: () => void }).setValue(value);
+      monacoEditorRef.current.setValue(value);
     }
   }, [value]);
 
   // Update read-only state
   useEffect(() => {
     if (monacoEditorRef.current) {
-      (
-        monacoEditorRef.current as {
-          updateOptions: () => void;
-        }
-      ).updateOptions({ readOnly });
+      monacoEditorRef.current.updateOptions({ readOnly });
     }
   }, [readOnly]);
 
