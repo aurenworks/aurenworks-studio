@@ -14,9 +14,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      'monaco-editor': process.env.NODE_ENV === 'test' 
-        ? './src/__mocks__/monaco-editor.js' 
-        : 'monaco-editor',
+      'monaco-editor':
+        process.env.NODE_ENV === 'test'
+          ? './src/__mocks__/monaco-editor.js'
+          : 'monaco-editor',
     },
   },
   build: {
