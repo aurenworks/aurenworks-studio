@@ -155,7 +155,7 @@ import { YamlEditor } from './components/YamlEditor';
   readOnly={false}
   height="400px"
   className="border rounded"
-/>
+/>;
 ```
 
 ### Features
