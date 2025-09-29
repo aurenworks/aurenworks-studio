@@ -1,6 +1,7 @@
 # Component Designer with YAML Toggle - Feature Implementation
 
 ## Overview
+
 This feature implements a component designer with YAML toggle functionality as requested in [Issue #10](https://github.com/aurenworks/aurenworks-studio/issues/10).
 
 ## Implementation Details
@@ -35,11 +36,13 @@ This feature implements a component designer with YAML toggle functionality as r
 ### Files Created/Modified
 
 #### New Files:
+
 - `src/features/components/ComponentDesigner.tsx` - Main component designer with tabs
 - `src/features/components/ComponentDesignerModal.tsx` - Modal wrapper
 - `src/features/components/ComponentsPage.tsx` - Updated with create/edit buttons
 
 #### Dependencies Added:
+
 - `js-yaml` - YAML parsing and serialization
 - `@types/js-yaml` - TypeScript types
 

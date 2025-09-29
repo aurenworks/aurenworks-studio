@@ -73,7 +73,9 @@ function getMockComponents(projectId: string): Component[] {
 
 export default function ComponentsPage({ projectId }: ComponentsPageProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingComponent, setEditingComponent] = useState<Component | null>(null);
+  const [editingComponent, setEditingComponent] = useState<Component | null>(
+    null
+  );
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['components', projectId],

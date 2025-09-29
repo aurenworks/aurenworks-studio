@@ -19,8 +19,7 @@ export default function ComponentDesignerModal({
 }: ComponentDesignerModalProps) {
   if (!isOpen) return null;
 
-  const handleSave = (savedComponent: Component) => {
-    console.log('Component saved:', savedComponent);
+  const handleSave = () => {
     onClose();
   };
 
