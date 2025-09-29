@@ -31,6 +31,12 @@ export default function App() {
               >
                 Records
               </Link>
+              <Link
+                to="/yaml-playground"
+                className="text-sm font-medium text-foreground-secondary hover:text-accent transition-colors"
+              >
+                YAML Playground
+              </Link>
             </nav>
           </div>
         </div>

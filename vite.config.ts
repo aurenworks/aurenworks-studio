@@ -8,4 +8,22 @@ export default defineConfig({
     setupFiles: './vitest.setup.ts',
     globals: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          monaco: ['monaco-editor'],
+        },
+      },
+    },
+  },
+  worker: {
+    format: 'es',
+  },
+  optimizeDeps: {
+    exclude: ['monaco-editor'],
+  },
+  define: {
+    global: 'globalThis',
+  },
 });
