@@ -7,8 +7,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
     globals: true,
-    deps: {
-      inline: ['monaco-editor'],
+  },
+  resolve: {
+    alias: {
+      'monaco-editor': './src/__mocks__/monaco-editor.js',
     },
   },
   build: {

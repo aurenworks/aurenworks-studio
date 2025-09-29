@@ -20,3 +20,9 @@ vi.mock('monaco-editor', () => ({
     },
   },
 }));
+
+// Mock js-yaml
+vi.mock('js-yaml', () => ({
+  dump: vi.fn((obj) => JSON.stringify(obj, null, 2)),
+  load: vi.fn((str) => JSON.parse(str)),
+}));

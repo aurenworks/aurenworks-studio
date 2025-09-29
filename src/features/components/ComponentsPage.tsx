@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { client, authHeader } from '../../lib/api/client';
 import type { components } from '../../lib/api/types';
-import ComponentDesignerModal from './ComponentDesignerModal';
+
+// Lazy load ComponentDesignerModal to avoid Monaco editor import during tests
+const ComponentDesignerModal = lazy(() => import('./ComponentDesignerModal'));
 
 type Component = components['schemas']['Component'];
 
@@ -185,20 +187,24 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
       </div>
 
       {/* Create Component Modal */}
-      <ComponentDesignerModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        projectId={projectId}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ComponentDesignerModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          projectId={projectId}
+        />
+      </Suspense>
 
       {/* Edit Component Modal */}
       {editingComponent && (
-        <ComponentDesignerModal
-          isOpen={!!editingComponent}
-          onClose={() => setEditingComponent(null)}
-          component={editingComponent}
-          projectId={projectId}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <ComponentDesignerModal
+            isOpen={!!editingComponent}
+            onClose={() => setEditingComponent(null)}
+            component={editingComponent}
+            projectId={projectId}
+          />
+        </Suspense>
       )}
     </>
   );
