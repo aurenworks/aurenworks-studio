@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -6,8 +6,12 @@ import App from './App';
 import ProjectsPage from './features/projects/ProjectsPage';
 import ComponentsRoute from './features/components/ComponentsRoute';
 import RecordsRoute from './features/records/RecordsRoute';
-import YamlPlayground from './features/components/YamlPlayground';
 import './index.css';
+
+// Lazy load YamlPlayground to avoid Monaco editor import during tests
+const YamlPlayground = lazy(
+  () => import('./features/components/YamlPlayground')
+);
 
 const router = createBrowserRouter([
   {
@@ -28,7 +32,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'yaml-playground',
-        element: <YamlPlayground />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <YamlPlayground />
+          </Suspense>
+        ),
       },
     ],
   },
