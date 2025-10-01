@@ -7,7 +7,7 @@ export interface ToastProps {
   type: ToastType;
   message: string;
   duration?: number;
-  onClose: (id: string) => void;
+  onClose: () => void;
 }
 
 export default function Toast({
@@ -28,7 +28,7 @@ export default function Toast({
     if (duration > 0) {
       const timer = window.setTimeout(() => {
         setIsVisible(false);
-        window.setTimeout(() => onClose(''), 300); // Wait for animation
+        window.setTimeout(() => onClose(), 300); // Wait for animation
       }, duration);
       return () => window.clearTimeout(timer);
     }
@@ -36,7 +36,7 @@ export default function Toast({
 
   const handleClose = () => {
     setIsVisible(false);
-    window.setTimeout(() => onClose(''), 300);
+    window.setTimeout(() => onClose(), 300);
   };
 
   const Icon = type === 'success' ? CheckCircle : XCircle;
@@ -77,15 +77,20 @@ export default function Toast({
 
 // Toast container component
 export interface ToastContainerProps {
-  toasts: Array<ToastProps & { id: string }>;
-  onClose: (id: string) => void;
+  toasts: Array<{
+    id: string;
+    type: ToastType;
+    message: string;
+    duration?: number;
+  }>;
+  onClose: (_id: string) => void;
 }
 
 export function ToastContainer({ toasts, onClose }: ToastContainerProps) {
   return (
     <div className="fixed top-4 right-4 z-50 space-y-2">
       {toasts.map(toast => (
-        <Toast key={toast.id} {...toast} onClose={onClose} />
+        <Toast key={toast.id} {...toast} onClose={() => onClose(toast.id)} />
       ))}
     </div>
   );

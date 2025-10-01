@@ -74,7 +74,6 @@ export async function updateRecord(
   return mockRecord;
 }
 
-// eslint-disable-next-line no-unused-vars
 export async function deleteRecord(_recordId: string): Promise<void> {
   // For now, just simulate success
   // TODO: Replace with real API call when records endpoints are available

@@ -8,10 +8,15 @@ import type { components } from '../../lib/api/types';
 import { YamlEditor } from '../../components/YamlEditor';
 import { ToastContainer } from '../../components/Toast';
 import { useToast } from '../../hooks/useToast';
-import FieldEditor, { fieldSchema } from './FieldEditor';
+import FieldEditor, { fieldSchema, type Field } from './FieldEditor';
 import * as yaml from 'js-yaml';
 
 type Component = components['schemas']['Component'];
+
+// Extended component type with fields for local use
+type ComponentWithFields = Component & {
+  fields?: Field[];
+};
 
 // Zod schema for form validation
 const componentSchema = z.object({
@@ -48,9 +53,9 @@ const componentSchema = z.object({
 type FormData = z.infer<typeof componentSchema>;
 
 interface ComponentDesignerProps {
-  component?: Component;
+  component?: ComponentWithFields;
   projectId: string;
-  // eslint-disable-next-line no-unused-vars
+
   onSave?: (_component: Component) => void;
   onCancel?: () => void;
 }
@@ -78,7 +83,7 @@ export default function ComponentDesigner({
       status: _component?.status || 'active',
       config: _component?.config || {},
       metadata: _component?.metadata || {},
-      fields: (_component as any)?.fields || [],
+      fields: _component?.fields || [],
     },
   });
 
@@ -100,7 +105,7 @@ export default function ComponentDesigner({
         status: _component.status,
         config: _component.config,
         metadata: _component.metadata,
-        fields: (_component as any).fields || [],
+        fields: _component.fields || [],
       };
       setYamlValue(yaml.dump(yamlData, { indent: 2 }));
     } else {
@@ -225,7 +230,7 @@ fields: []`;
 
   return (
     <>
-      <ToastContainer toasts={toasts as any} onClose={removeToast} />
+      <ToastContainer toasts={toasts} onClose={removeToast} />
       <FormProvider {...form}>
         <div className="max-w-4xl mx-auto p-6">
           <div className="mb-6">

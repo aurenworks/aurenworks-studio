@@ -14,6 +14,16 @@ export const fieldSchema = z.object({
 
 export type Field = z.infer<typeof fieldSchema>;
 
+// Type for field array errors
+type FieldArrayErrors = {
+  [key: number]: {
+    key?: { message?: string };
+    label?: { message?: string };
+    type?: { message?: string };
+    options?: { message?: string };
+  };
+};
+
 interface FieldEditorProps {
   name: string;
 }
@@ -105,9 +115,9 @@ export default function FieldEditor({ name }: FieldEditorProps) {
                   className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="field_key"
                 />
-                {(errors[name] as any)?.[index]?.key && (
+                {(errors[name] as FieldArrayErrors)?.[index]?.key && (
                   <p className="mt-1 text-sm text-error">
-                    {(errors[name] as any)?.[index]?.key?.message}
+                    {(errors[name] as FieldArrayErrors)?.[index]?.key?.message}
                   </p>
                 )}
               </div>
@@ -123,9 +133,12 @@ export default function FieldEditor({ name }: FieldEditorProps) {
                   className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="Field Label"
                 />
-                {(errors[name] as any)?.[index]?.label && (
+                {(errors[name] as FieldArrayErrors)?.[index]?.label && (
                   <p className="mt-1 text-sm text-error">
-                    {(errors[name] as any)?.[index]?.label?.message}
+                    {
+                      (errors[name] as FieldArrayErrors)?.[index]?.label
+                        ?.message
+                    }
                   </p>
                 )}
               </div>
@@ -144,9 +157,9 @@ export default function FieldEditor({ name }: FieldEditorProps) {
                   <option value="date">Date</option>
                   <option value="select">Select</option>
                 </select>
-                {(errors[name] as any)?.[index]?.type && (
+                {(errors[name] as FieldArrayErrors)?.[index]?.type && (
                   <p className="mt-1 text-sm text-error">
-                    {(errors[name] as any)?.[index]?.type?.message}
+                    {(errors[name] as FieldArrayErrors)?.[index]?.type?.message}
                   </p>
                 )}
               </div>
@@ -187,9 +200,12 @@ export default function FieldEditor({ name }: FieldEditorProps) {
                     setValue(`${name}.${index}.options`, options);
                   }}
                 />
-                {(errors[name] as any)?.[index]?.options && (
+                {(errors[name] as FieldArrayErrors)?.[index]?.options && (
                   <p className="mt-1 text-sm text-error">
-                    {(errors[name] as any)?.[index]?.options?.message}
+                    {
+                      (errors[name] as FieldArrayErrors)?.[index]?.options
+                        ?.message
+                    }
                   </p>
                 )}
               </div>

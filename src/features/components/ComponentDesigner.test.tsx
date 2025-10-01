@@ -18,14 +18,14 @@ vi.mock('../../components/YamlEditor', () => {
     default: function MockYamlEditor({
       onChange,
     }: {
-      value: string;
-      onChange: (value: string) => void;
+      onChange: (_value: string) => void;
     }) {
       return (
         <textarea
           data-testid="yaml-editor"
           onChange={e => onChange(e.target.value)}
           placeholder="YAML content"
+          defaultValue=""
         />
       );
     },
@@ -35,10 +35,10 @@ vi.mock('../../components/YamlEditor', () => {
 // Mock the FieldEditor component
 vi.mock('./FieldEditor', () => {
   return {
-    default: function MockFieldEditor({ name: _name }: { name: string }) {
+    default: function MockFieldEditor({ name }: { name: string }) {
       return (
         <div data-testid="field-editor">
-          <h3>Fields</h3>
+          <h3>Fields for {name}</h3>
           <button type="button">Add Field</button>
         </div>
       );
