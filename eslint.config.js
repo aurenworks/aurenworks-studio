@@ -60,6 +60,7 @@ export default [
       'no-debugger': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
+      'no-unused-vars': 'off', // Use TypeScript version instead
 
       // Prettier integration
       'prettier/prettier': 'error',

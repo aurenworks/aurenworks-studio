@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export interface YamlEditorProps {
   value: string;
-  // eslint-disable-next-line no-unused-vars
+
   onChange: (value: string) => void;
   schema?: string | object; // URL or inline schema object
   readOnly?: boolean;
