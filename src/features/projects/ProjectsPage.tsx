@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { client, authHeader } from '../../lib/api/client';
+import { useToast } from '../../hooks/useToast';
+import { ToastContainer } from '../../components/Toast';
 import type { components } from '../../lib/api/types';
 import NewProjectModal from './NewProjectModal';
 
@@ -53,6 +55,7 @@ function getMockProjects(): Project[] {
 export default function ProjectsPage() {
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { toasts, removeToast } = useToast();
   const { data, isLoading, error } = useQuery({
     queryKey: ['projects'],
     queryFn: listProjects,
@@ -131,6 +134,8 @@ export default function ProjectsPage() {
           isOpen={isNewProjectModalOpen}
           onClose={() => setIsNewProjectModalOpen(false)}
         />
+
+        <ToastContainer toasts={toasts} onClose={removeToast} />
       </>
     );
   }
@@ -209,6 +214,8 @@ export default function ProjectsPage() {
         isOpen={isNewProjectModalOpen}
         onClose={() => setIsNewProjectModalOpen(false)}
       />
+
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );
 }

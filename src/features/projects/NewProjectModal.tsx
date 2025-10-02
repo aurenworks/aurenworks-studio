@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { client, authHeader } from '../../lib/api/client';
+import { useToast } from '../../hooks/useToast';
 import type { components } from '../../lib/api/types';
 
 type CreateProjectRequest = components['schemas']['CreateProjectRequest'];
@@ -10,6 +14,21 @@ interface NewProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// Form validation schema
+const createProjectSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Project name is required')
+    .max(100, 'Name must be less than 100 characters'),
+  description: z
+    .string()
+    .max(500, 'Description must be less than 500 characters')
+    .optional(),
+  tags: z.array(z.string()).optional(),
+});
+
+type CreateProjectFormData = z.infer<typeof createProjectSchema>;
 
 async function createProject(data: CreateProjectRequest): Promise<Project> {
   const res = await client.POST('/projects', {
@@ -25,27 +44,51 @@ export default function NewProjectModal({
   isOpen,
   onClose,
 }: NewProjectModalProps) {
-  const [formData, setFormData] = useState<CreateProjectRequest>({
-    name: '',
-    description: '',
-    tags: [],
-  });
   const queryClient = useQueryClient();
+  const { showSuccess, showError } = useToast();
 
-  const createMutation = useMutation({
-    mutationFn: createProject,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-      onClose();
-      setFormData({ name: '', description: '', tags: [] });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<CreateProjectFormData>({
+    resolver: zodResolver(createProjectSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      tags: [],
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name.trim()) {
-      createMutation.mutate(formData);
-    }
+  const createMutation = useMutation({
+    mutationFn: createProject,
+    onSuccess: newProject => {
+      // Optimistically add the new project to the cache
+      queryClient.setQueryData(
+        ['projects'],
+        (oldData: Project[] | undefined) => {
+          if (!oldData) return [newProject];
+          return [...oldData, newProject];
+        }
+      );
+
+      showSuccess('Project created successfully!');
+      reset();
+      onClose();
+    },
+    onError: error => {
+      showError(`Failed to create project: ${error.message}`);
+    },
+  });
+
+  const onSubmit = (data: CreateProjectFormData) => {
+    createMutation.mutate(data);
+  };
+
+  const handleClose = () => {
+    reset();
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -57,7 +100,7 @@ export default function NewProjectModal({
           Create New Project
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label
               htmlFor="name"
@@ -68,11 +111,13 @@ export default function NewProjectModal({
             <input
               id="name"
               type="text"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="input w-full"
-              required
+              {...register('name')}
+              className={`input w-full ${errors.name ? 'border-red-500' : ''}`}
+              placeholder="Enter project name"
             />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
@@ -84,38 +129,36 @@ export default function NewProjectModal({
             </label>
             <textarea
               id="description"
-              value={formData.description || ''}
-              onChange={e =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className="input w-full"
+              {...register('description')}
+              className={`input w-full ${errors.description ? 'border-red-500' : ''}`}
               rows={3}
+              placeholder="Optional project description"
             />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="btn-outline flex-1"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={createMutation.isPending || !formData.name.trim()}
+              disabled={isSubmitting}
               className="btn-primary flex-1 disabled:opacity-50"
             >
-              {createMutation.isPending ? 'Creating...' : 'Create Project'}
+              {isSubmitting ? 'Creating...' : 'Create Project'}
             </button>
           </div>
         </form>
-
-        {createMutation.error && (
-          <div className="mt-4 text-error text-sm">
-            Failed to create project: {createMutation.error.message}
-          </div>
-        )}
       </div>
     </div>
   );
