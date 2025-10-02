@@ -62,7 +62,7 @@ export default function ProjectsPage() {
   });
 
   const handleProjectClick = (projectId: string) => {
-    navigate(`/components/${projectId}`);
+    navigate(`/projects/${projectId}/components`);
   };
 
   if (isLoading)

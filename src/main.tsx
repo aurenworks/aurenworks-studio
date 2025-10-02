@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import ProjectsPage from './features/projects/ProjectsPage';
 import ComponentsRoute from './features/components/ComponentsRoute';
+import ComponentDesignerRoute from './features/components/ComponentDesignerRoute';
 import RecordsRoute from './features/records/RecordsRoute';
 import './index.css';
 
@@ -23,8 +24,16 @@ const router = createBrowserRouter([
         element: <ProjectsPage />,
       },
       {
-        path: 'components/:projectId',
+        path: 'projects/:projectId/components',
         element: <ComponentsRoute />,
+      },
+      {
+        path: 'components/:id',
+        element: <ComponentDesignerRoute />,
+      },
+      {
+        path: 'projects/:projectId/components/new',
+        element: <ComponentDesignerRoute />,
       },
       {
         path: 'records/:componentId',

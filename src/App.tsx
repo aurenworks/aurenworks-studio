@@ -20,7 +20,7 @@ export default function App() {
                 Projects
               </Link>
               <Link
-                to="/components/test-project"
+                to="/projects/test-project/components"
                 className="text-sm font-medium text-foreground-secondary hover:text-accent transition-colors"
               >
                 Components
