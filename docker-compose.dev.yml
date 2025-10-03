@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   db:
     image: postgres:15
@@ -12,9 +11,8 @@ services:
       - dbdata:/var/lib/postgresql/data
 
   api:
-    build:
-      context: ../aurenworks-api
-      dockerfile: Dockerfile
+    image: eclipse-temurin:21-jre
+    working_dir: /work
     environment:
       DATABASE_URL: postgres://postgres:postgres@db:5432/aurenworks
       JWT_SECRET: devsecret
@@ -22,9 +20,11 @@ services:
       PORT: 3000
     ports:
       - "3000:3000"
+    volumes:
+      - ../aurenworks-api/target/aurenworks-api-dev.jar:/work/app.jar
     depends_on:
       - db
-    # Adjust to your API runner
-    # command: ["pnpm","dev"]
+    command: ["sh", "-c", "exec java -Dquarkus.http.port=3000 -jar /work/app.jar"]
+
 volumes:
   dbdata:
