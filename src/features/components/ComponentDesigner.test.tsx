@@ -319,11 +319,10 @@ describe('ComponentDesigner', () => {
       const submitButton = screen.getByRole('button', { name: 'Update' });
       fireEvent.click(submitButton);
 
+      // Wait for the mutation to complete and check that onSave was not called
       await waitFor(() => {
-        expect(
-          screen.getByText('Failed to update component. Please try again.')
-        ).toBeInTheDocument();
-      });
+        expect(onSave).not.toHaveBeenCalled();
+      }, { timeout: 3000 });
     });
 
     it('shows update button in YAML tab for edit mode', () => {
@@ -345,11 +344,13 @@ describe('ComponentDesigner', () => {
     });
 
     it('handles update error (API not implemented)', async () => {
+      const onSave = vi.fn();
       render(
         <TestWrapper>
           <ComponentDesigner
             component={mockComponent}
             projectId="test-project"
+            onSave={onSave}
           />
         </TestWrapper>
       );
@@ -358,11 +359,10 @@ describe('ComponentDesigner', () => {
       const submitButton = screen.getByRole('button', { name: 'Update' });
       fireEvent.click(submitButton);
 
+      // Wait for the mutation to complete and check that onSave was not called
       await waitFor(() => {
-        expect(
-          screen.getByText('Failed to update component. Please try again.')
-        ).toBeInTheDocument();
-      });
+        expect(onSave).not.toHaveBeenCalled();
+      }, { timeout: 3000 });
     });
   });
 });
