@@ -234,6 +234,7 @@ export const YamlEditor: React.FC<YamlEditorProps> = ({
         aria-label="YAML Editor"
         role="textbox"
         tabIndex={0}
+        data-testid="yaml-editor"
       />
     </div>
   );

@@ -433,6 +433,7 @@ fields: []`;
             <button
               type="button"
               onClick={() => setActiveTab('yaml')}
+              data-testid="yaml-tab"
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'yaml'
                   ? 'border-accent text-accent'
@@ -610,6 +611,7 @@ fields: []`;
                   type="button"
                   onClick={handleYamlSubmit}
                   disabled={isSubmitting || !!yamlError}
+                  data-testid="save-button"
                   className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors"
                 >
                   {isSubmitting

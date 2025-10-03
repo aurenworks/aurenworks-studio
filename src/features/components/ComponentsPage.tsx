@@ -124,7 +124,7 @@ export default function ComponentsPage({ projectId }: ComponentsPageProps) {
   });
 
   const handleRowClick = (component: Component) => {
-    navigate(`/components/${component.id}`);
+    navigate(`/projects/${projectId}/components/${component.id}`);
   };
 
   const handleNewComponent = () => {
