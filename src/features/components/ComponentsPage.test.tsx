@@ -219,6 +219,8 @@ describe('ComponentsPage', () => {
     // Click on the row (the component name)
     screen.getByText('Test Component').click();
 
-    expect(mockNavigate).toHaveBeenCalledWith('/components/comp-1');
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/projects/test-project/components/comp-1'
+    );
   });
 });
