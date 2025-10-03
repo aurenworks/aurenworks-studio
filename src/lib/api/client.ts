@@ -27,7 +27,8 @@ export async function getComponentWithETag(
   componentId: string
 ): Promise<{ component: unknown; etag: string | null }> {
   const res = await client.GET(
-    '/projects/{projectId}/components/{componentId}',
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    '/projects/{projectId}/components/{componentId}' as any,
     {
       params: {
         path: { projectId, componentId },
@@ -36,7 +37,8 @@ export async function getComponentWithETag(
     }
   );
 
-  if (res.error) throw res.error;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((res as any).error) throw (res as any).error;
 
   // Extract ETag from response headers
   const etag = res.response?.headers.get('etag') || null;

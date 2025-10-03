@@ -57,6 +57,7 @@ pnpm test:e2e
 ### Environment Configuration
 
 All workflows use these environment variables:
+
 - `STUDIO_BASE_URL`: http://localhost:5173
 - `API_BASE_URL`: http://localhost:3000
 - `DATABASE_URL`: postgres://postgres:postgres@localhost:5432/aurenworks
@@ -84,6 +85,7 @@ All workflows use these environment variables:
 ### GitHub Actions
 
 Tests run automatically on:
+
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop` branches
 - Manual workflow dispatch
@@ -109,6 +111,7 @@ pnpm test:e2e:debug
 ### Playwright Configuration
 
 The `playwright.config.ts` file is configured for:
+
 - 60-second timeout per test
 - Chromium browser
 - Video recording on failure
@@ -117,6 +120,7 @@ The `playwright.config.ts` file is configured for:
 ### Mock API
 
 When the real API is not available, a mock API server is started that:
+
 - Handles CORS properly
 - Provides mock endpoints for authentication
 - Returns realistic test data

@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: aurenworks
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - dbdata:/var/lib/postgresql/data
 
@@ -19,12 +19,13 @@ services:
       NODE_ENV: development
       PORT: 3000
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ../aurenworks-api/target/aurenworks-api-dev.jar:/work/app.jar
     depends_on:
       - db
-    command: ["sh", "-c", "exec java -Dquarkus.http.port=3000 -jar /work/app.jar"]
+    command:
+      ['sh', '-c', 'exec java -Dquarkus.http.port=3000 -jar /work/app.jar']
 
 volumes:
   dbdata:

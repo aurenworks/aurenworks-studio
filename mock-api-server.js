@@ -8,9 +8,9 @@ app.use(cors());
 app.use(express.json());
 
 // Mock data storage
-let projects = [];
-let components = [];
-let records = [];
+const projects = [];
+const components = [];
+const records = [];
 let nextId = 1;
 
 // Auth endpoint
@@ -39,7 +39,7 @@ app.post('/projects', (req, res) => {
     id: `project-${nextId++}`,
     name: req.body.name,
     ownerId: req.body.ownerId,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
   projects.push(project);
   res.json(project);
@@ -66,7 +66,7 @@ app.post('/components', (req, res) => {
     name: req.body.name,
     fields: req.body.fields || [],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   components.push(component);
   res.json(component);
@@ -93,7 +93,9 @@ app.put('/components/:id', (req, res) => {
   // Check for optimistic concurrency conflict
   const ifMatch = req.headers['if-match'];
   if (ifMatch && ifMatch !== `"${component.updatedAt}"`) {
-    return res.status(409).json({ error: 'Conflict: Component was modified by another user' });
+    return res
+      .status(409)
+      .json({ error: 'Conflict: Component was modified by another user' });
   }
 
   // Update component
@@ -117,7 +119,7 @@ app.post('/records', (req, res) => {
     componentId: req.body.componentId,
     data: req.body.data || {},
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   records.push(record);
   res.json(record);

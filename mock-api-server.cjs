@@ -39,7 +39,7 @@ app.post('/projects', (req, res) => {
     id: `project-${nextId++}`,
     name: req.body.name,
     ownerId: req.body.ownerId,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
   projects.push(project);
   res.json(project);
@@ -71,7 +71,7 @@ app.post('/components', (req, res) => {
     metadata: req.body.metadata || {},
     fields: req.body.fields || [],
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   components.push(component);
   res.json(component);
@@ -91,7 +91,9 @@ app.get('/components/:id', (req, res) => {
 
 // Project-specific component endpoint
 app.get('/projects/:projectId/components/:id', (req, res) => {
-  const component = components.find(c => c.id === req.params.id && c.projectId === req.params.projectId);
+  const component = components.find(
+    c => c.id === req.params.id && c.projectId === req.params.projectId
+  );
   if (component) {
     // Add ETag header for optimistic concurrency
     const etag = `"${component.updatedAt}"`;
@@ -111,16 +113,23 @@ app.put('/components/:id', (req, res) => {
   // Check for optimistic concurrency conflict
   const ifMatch = req.headers['if-match'];
   if (ifMatch && ifMatch !== `"${component.updatedAt}"`) {
-    return res.status(409).json({ error: 'Conflict: Component was modified by another user' });
+    return res
+      .status(409)
+      .json({ error: 'Conflict: Component was modified by another user' });
   }
 
   // Update component
   component.name = req.body.name || component.name;
-  component.description = req.body.description !== undefined ? req.body.description : component.description;
+  component.description =
+    req.body.description !== undefined
+      ? req.body.description
+      : component.description;
   component.type = req.body.type || component.type;
   component.status = req.body.status || component.status;
-  component.config = req.body.config !== undefined ? req.body.config : component.config;
-  component.metadata = req.body.metadata !== undefined ? req.body.metadata : component.metadata;
+  component.config =
+    req.body.config !== undefined ? req.body.config : component.config;
+  component.metadata =
+    req.body.metadata !== undefined ? req.body.metadata : component.metadata;
   component.fields = req.body.fields || component.fields;
   component.updatedAt = new Date().toISOString();
 
@@ -131,7 +140,9 @@ app.put('/components/:id', (req, res) => {
 
 // Project-specific component update endpoint
 app.put('/projects/:projectId/components/:id', (req, res) => {
-  const component = components.find(c => c.id === req.params.id && c.projectId === req.params.projectId);
+  const component = components.find(
+    c => c.id === req.params.id && c.projectId === req.params.projectId
+  );
   if (!component) {
     return res.status(404).json({ error: 'Component not found' });
   }
@@ -139,16 +150,23 @@ app.put('/projects/:projectId/components/:id', (req, res) => {
   // Check for optimistic concurrency conflict
   const ifMatch = req.headers['if-match'];
   if (ifMatch && ifMatch !== `"${component.updatedAt}"`) {
-    return res.status(409).json({ error: 'Conflict: Component was modified by another user' });
+    return res
+      .status(409)
+      .json({ error: 'Conflict: Component was modified by another user' });
   }
 
   // Update component
   component.name = req.body.name || component.name;
-  component.description = req.body.description !== undefined ? req.body.description : component.description;
+  component.description =
+    req.body.description !== undefined
+      ? req.body.description
+      : component.description;
   component.type = req.body.type || component.type;
   component.status = req.body.status || component.status;
-  component.config = req.body.config !== undefined ? req.body.config : component.config;
-  component.metadata = req.body.metadata !== undefined ? req.body.metadata : component.metadata;
+  component.config =
+    req.body.config !== undefined ? req.body.config : component.config;
+  component.metadata =
+    req.body.metadata !== undefined ? req.body.metadata : component.metadata;
   component.fields = req.body.fields || component.fields;
   component.updatedAt = new Date().toISOString();
 
@@ -168,7 +186,7 @@ app.post('/records', (req, res) => {
     componentId: req.body.componentId,
     data: req.body.data || {},
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   records.push(record);
   res.json(record);

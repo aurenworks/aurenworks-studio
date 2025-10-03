@@ -186,7 +186,8 @@ fields: []`;
       };
 
       const res = await client.PUT(
-        '/projects/{projectId}/components/{componentId}',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        '/projects/{projectId}/components/{componentId}' as any,
         {
           params: {
             path: { projectId, componentId: _component.id },
@@ -201,7 +202,8 @@ fields: []`;
         if ((res.error as { status?: number }).status === 409) {
           // Fetch latest component for conflict resolution
           const latestRes = await client.GET(
-            '/projects/{projectId}/components/{componentId}',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            '/projects/{projectId}/components/{componentId}' as any,
             {
               params: {
                 path: { projectId, componentId: _component.id },
@@ -211,7 +213,7 @@ fields: []`;
           );
 
           if (latestRes.data) {
-            setLatestComponent(latestRes.data);
+            setLatestComponent(latestRes.data as Component);
             setYourDraft({
               ..._component,
               ...data,
@@ -231,7 +233,7 @@ fields: []`;
         queryKey: ['component', _component?.id],
       });
       showSuccess('Component updated successfully!');
-      onSave?.(data);
+      onSave?.(data as Component);
     },
     onError: (error: unknown) => {
       if ((error as { message?: string }).message === 'CONFLICT') {
@@ -340,7 +342,8 @@ fields: []`;
     if (yourDraft) {
       // Force update without ETag
       const res = await client.PUT(
-        '/projects/{projectId}/components/{componentId}',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        '/projects/{projectId}/components/{componentId}' as any,
         {
           params: {
             path: {
@@ -363,7 +366,7 @@ fields: []`;
         queryKey: ['component', _component?.id],
       });
       showSuccess('Component updated successfully!');
-      onSave?.(res.data);
+      onSave?.(res.data as Component);
     }
   };
 
