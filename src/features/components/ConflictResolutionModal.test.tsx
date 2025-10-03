@@ -57,12 +57,12 @@ describe('ConflictResolutionModal', () => {
 
   it('displays component information correctly', () => {
     render(<ConflictResolutionModal {...defaultProps} />);
-    
+
     // Check latest component info
     expect(screen.getByText('Test Component')).toBeInTheDocument();
     expect(screen.getAllByText('api')).toHaveLength(2); // Both components have type 'api'
     expect(screen.getAllByText('active')).toHaveLength(2); // Both components have status 'active'
-    
+
     // Check draft component info
     expect(screen.getByText('Updated Test Component')).toBeInTheDocument();
     expect(screen.getByText('An updated test component')).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe('ConflictResolutionModal', () => {
 
   it('displays timestamps correctly', () => {
     render(<ConflictResolutionModal {...defaultProps} />);
-    
+
     // Check that timestamps are displayed (format may vary based on locale)
     expect(screen.getAllByText(/12\/31\/2022/)).toHaveLength(2);
   });

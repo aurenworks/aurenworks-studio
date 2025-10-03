@@ -4,10 +4,19 @@ import { useQuery } from '@tanstack/react-query';
 import { getComponentWithETag } from '../../lib/api/client';
 import type { components } from '../../lib/api/types';
 
+type Component = components['schemas']['Component'];
+type ComponentWithFields = Component & {
+  fields?: Array<{
+    key: string;
+    label: string;
+    type: 'text' | 'number' | 'date' | 'select';
+    required: boolean;
+    options?: string[];
+  }>;
+};
+
 // Lazy load ComponentDesigner to avoid Monaco editor import during tests
 const ComponentDesigner = lazy(() => import('./ComponentDesigner'));
-
-type Component = components['schemas']['Component'];
 
 export default function ComponentDesignerRoute() {
   const { id, projectId } = useParams<{ id?: string; projectId: string }>();
@@ -83,7 +92,11 @@ export default function ComponentDesignerRoute() {
   return (
     <Suspense fallback={<div>Loading component designer...</div>}>
       <ComponentDesigner
-        component={componentData?.component || undefined}
+        component={
+          componentData?.component
+            ? (componentData.component as ComponentWithFields)
+            : undefined
+        }
         projectId={projectId || ''}
         etag={componentData?.etag}
         onSave={handleSave}
