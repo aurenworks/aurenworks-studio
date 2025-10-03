@@ -144,7 +144,7 @@ fields: []`;
 
   // Update component mutation
   const updateComponentMutation = useMutation({
-    mutationFn: async (data: FormData) => {
+    mutationFn: async (_data: FormData) => {
       if (!_component?.id)
         throw new Error('Component ID is required for update');
 
