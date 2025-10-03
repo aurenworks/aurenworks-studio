@@ -159,8 +159,11 @@ app.put('/projects/:projectId/components/:id', (req, res) => {
   console.log('PUT request - If-Match header:', ifMatch);
   console.log('PUT request - Component updatedAt:', component.updatedAt);
   console.log('PUT request - Expected ETag:', `"${component.updatedAt}"`);
-  console.log('PUT request - ETag match:', ifMatch === `"${component.updatedAt}"`);
-  
+  console.log(
+    'PUT request - ETag match:',
+    ifMatch === `"${component.updatedAt}"`
+  );
+
   if (ifMatch && ifMatch !== `"${component.updatedAt}"`) {
     console.log('CONFLICT DETECTED - returning 409');
     return res
