@@ -171,6 +171,53 @@ import { YamlEditor } from './components/YamlEditor';
 
 Visit `/yaml-playground` to see the editor in action with a sample component schema.
 
+## Pre-commit Hooks
+
+This project includes a pre-commit hook that automatically runs linting, format checking, and type checking before each commit to ensure code quality.
+
+### Setup
+
+To enable the pre-commit hook, run:
+
+```bash
+# Using npm script (recommended)
+pnpm pre-commit:setup
+
+# Or manually
+cp scripts/pre-commit.sh .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+### What it checks
+
+The pre-commit hook runs the following checks:
+
+1. **TypeScript type checking** (`pnpm type-check`)
+2. **Code formatting** (`pnpm format:check`)
+3. **ESLint linting** (`pnpm lint`)
+
+If any check fails, the commit will be blocked until the issues are resolved.
+
+### Manual checks
+
+You can run these checks manually:
+
+```bash
+# Run all checks (same as pre-commit hook)
+pnpm pre-commit:check
+
+# Or run individual checks
+pnpm type-check
+pnpm format:check
+pnpm lint
+
+# Fix formatting issues
+pnpm format
+
+# Fix linting issues (auto-fixable ones)
+pnpm lint:fix
+```
+
 ## Roadmap (early)
 
 - Integrate generated TS client (Issue #14)
