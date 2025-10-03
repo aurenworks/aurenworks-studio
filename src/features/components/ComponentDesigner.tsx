@@ -159,7 +159,9 @@ fields: []`;
 
       // TODO: Replace with actual API endpoint when available
       // This should be: client.PUT('/projects/{projectId}/components/{componentId}', ...)
-      return Promise.reject(new Error('Component update not yet implemented in API'));
+      return Promise.reject(
+        new Error('Component update not yet implemented in API')
+      );
     },
     onSuccess: _data => {
       queryClient.invalidateQueries({ queryKey: ['components', projectId] });
@@ -250,9 +252,9 @@ fields: []`;
         // Create new component
         await createComponentMutation.mutateAsync(data);
       }
-    } catch (error) {
+    } catch {
       // Error is already handled by the mutation's onError callback
-      console.error('Form submission error:', error);
+      // Silently handle the error to prevent unhandled rejections
     } finally {
       setIsSubmitting(false);
     }
