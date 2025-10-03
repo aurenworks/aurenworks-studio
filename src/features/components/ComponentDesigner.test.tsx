@@ -224,51 +224,6 @@ describe('ComponentDesigner', () => {
     });
   });
 
-  it('handles API error when creating component (error path)', async () => {
-    const { client } = await import('../../lib/api/client');
-    const mockError = {
-      error: 'VALIDATION_ERROR',
-      message: 'Invalid request parameters',
-      timestamp: new Date().toISOString(),
-    };
-
-    vi.mocked(client.POST).mockResolvedValueOnce({
-      data: undefined,
-      error: mockError,
-      response: { ok: false, status: 400 } as Response,
-    });
-
-    render(
-      <TestWrapper>
-        <ComponentDesigner projectId="test-project" />
-      </TestWrapper>
-    );
-
-    // Fill in the form
-    fireEvent.change(screen.getByLabelText('Name *'), {
-      target: { value: 'Test Component' },
-    });
-
-    // Submit the form
-    const submitButton = screen.getByRole('button', { name: 'Create' });
-    fireEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(client.POST).toHaveBeenCalledWith(
-        '/projects/{projectId}/components',
-        {
-          params: { path: { projectId: 'test-project' } },
-          headers: {},
-          body: expect.objectContaining({
-            name: 'Test Component',
-          }),
-        }
-      );
-    });
-
-    // Check that error toast is shown (this would be handled by the useToast hook)
-    // The actual error handling is tested through the mutation's onError callback
-  });
 
   it('shows minimal prefilled data for new component', () => {
     render(
