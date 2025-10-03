@@ -425,6 +425,7 @@ fields: []`;
             <button
               type="button"
               onClick={() => setActiveTab('form')}
+              data-testid="form-tab"
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'form'
                   ? 'border-accent text-accent'
@@ -598,6 +599,7 @@ fields: []`;
                 onChange={handleYamlChange}
                 height="400px"
                 className="border border-border rounded-md"
+                data-testid="yaml-editor"
               />
 
               <div className="flex justify-end space-x-4">
