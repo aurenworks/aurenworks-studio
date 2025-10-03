@@ -98,7 +98,7 @@ export default [
     },
   },
   {
-    files: ['mock-api-server.*', '**/mock-api-server.*'],
+    files: ['mock-api-server.*', '**/mock-api-server.*', 'test-mock-server.*'],
     languageOptions: {
       globals: {
         console: 'readonly',
@@ -110,6 +110,7 @@ export default [
         process: 'readonly',
         Buffer: 'readonly',
         global: 'readonly',
+        fetch: 'readonly',
       },
     },
     rules: {
