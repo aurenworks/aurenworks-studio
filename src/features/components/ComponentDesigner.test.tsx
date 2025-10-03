@@ -169,4 +169,71 @@ describe('ComponentDesigner', () => {
       expect(screen.getByText('Name is required')).toBeInTheDocument();
     });
   });
+
+  it('creates component successfully (happy path)', async () => {
+    const { client } = await import('../../lib/api/client');
+    const mockComponent = {
+      id: 'comp-1',
+      name: 'Test Component',
+      type: 'api' as const,
+      status: 'active' as const,
+      projectId: 'test-project',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    vi.mocked(client.POST).mockResolvedValueOnce({
+      data: mockComponent,
+      error: undefined,
+      response: { ok: true, status: 201 } as Response,
+    });
+
+    const onSave = vi.fn();
+    render(
+      <TestWrapper>
+        <ComponentDesigner projectId="test-project" onSave={onSave} />
+      </TestWrapper>
+    );
+
+    // Fill in the form
+    fireEvent.change(screen.getByLabelText('Name *'), {
+      target: { value: 'Test Component' },
+    });
+
+    // Submit the form
+    const submitButton = screen.getByRole('button', { name: 'Create' });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(client.POST).toHaveBeenCalledWith(
+        '/projects/{projectId}/components',
+        {
+          params: { path: { projectId: 'test-project' } },
+          headers: {},
+          body: expect.objectContaining({
+            name: 'Test Component',
+            type: 'api',
+            status: 'active',
+          }),
+        }
+      );
+    });
+
+    await waitFor(() => {
+      expect(onSave).toHaveBeenCalledWith(mockComponent);
+    });
+  });
+
+  it('shows minimal prefilled data for new component', () => {
+    render(
+      <TestWrapper>
+        <ComponentDesigner projectId="test-project" />
+      </TestWrapper>
+    );
+
+    // Check that form has default values
+    expect(screen.getByLabelText('Name *')).toHaveValue(''); // name field
+    expect(screen.getByLabelText('Type *')).toHaveValue('api'); // type field
+    expect(screen.getByLabelText('Status *')).toHaveValue('active'); // status field
+  });
 });
