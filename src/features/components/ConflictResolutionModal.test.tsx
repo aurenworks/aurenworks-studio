@@ -91,7 +91,7 @@ describe('ConflictResolutionModal', () => {
 
   it('displays timestamps correctly', () => {
     render(<ConflictResolutionModal {...defaultProps} />);
-    
+
     // Check that timestamps are displayed (format may vary based on locale and timezone)
     // Look for any date format that contains 2022 or 2023
     const dateElements = screen.getAllByText(/(2022|2023)/);
