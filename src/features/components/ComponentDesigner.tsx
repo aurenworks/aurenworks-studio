@@ -8,7 +8,7 @@ import type { components } from '../../lib/api/types';
 import { YamlEditor } from '../../components/YamlEditor';
 import { ToastContainer } from '../../components/Toast';
 import { useToast } from '../../hooks/useToast';
-import FieldEditor, { fieldSchema, type Field } from './FieldEditor';
+import FieldEditor, { type Field } from './FieldEditor';
 import * as yaml from 'js-yaml';
 
 type Component = components['schemas']['Component'];
@@ -17,6 +17,15 @@ type Component = components['schemas']['Component'];
 type ComponentWithFields = Component & {
   fields?: Field[];
 };
+
+// Field schema definition
+const fieldSchema = z.object({
+  key: z.string().min(1, 'Key is required'),
+  label: z.string().min(1, 'Label is required'),
+  type: z.enum(['text', 'number', 'date', 'select']),
+  required: z.boolean(),
+  options: z.array(z.string()).optional(),
+});
 
 // Zod schema for form validation
 const componentSchema = z.object({
@@ -150,7 +159,7 @@ fields: []`;
 
       // TODO: Replace with actual API endpoint when available
       // This should be: client.PUT('/projects/{projectId}/components/{componentId}', ...)
-      throw new Error('Component update not yet implemented in API');
+      return Promise.reject(new Error('Component update not yet implemented in API'));
     },
     onSuccess: _data => {
       queryClient.invalidateQueries({ queryKey: ['components', projectId] });
@@ -241,6 +250,9 @@ fields: []`;
         // Create new component
         await createComponentMutation.mutateAsync(data);
       }
+    } catch (error) {
+      // Error is already handled by the mutation's onError callback
+      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }
