@@ -109,6 +109,7 @@ export default function ComponentDesigner({
       };
       setYamlValue(yaml.dump(yamlData, { indent: 2 }));
     } else {
+      // Minimal prefilled ComponentModel for new components
       const defaultYaml = `name: ""
 description: ""
 type: api
