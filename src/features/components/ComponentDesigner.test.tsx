@@ -8,6 +8,8 @@ import ComponentDesigner from './ComponentDesigner';
 vi.mock('../../lib/api/client', () => ({
   client: {
     POST: vi.fn(),
+    PUT: vi.fn(),
+    GET: vi.fn(),
   },
   authHeader: vi.fn(() => ({})),
 }));
@@ -235,5 +237,132 @@ describe('ComponentDesigner', () => {
     expect(screen.getByLabelText('Name *')).toHaveValue(''); // name field
     expect(screen.getByLabelText('Type *')).toHaveValue('api'); // type field
     expect(screen.getByLabelText('Status *')).toHaveValue('active'); // status field
+  });
+
+  describe('Edit Component', () => {
+    const mockComponent = {
+      id: 'comp-1',
+      name: 'Existing Component',
+      description: 'A test component',
+      type: 'service' as const,
+      status: 'inactive' as const,
+      projectId: 'test-project',
+      config: { port: 3000 },
+      metadata: { version: '1.0.0' },
+      fields: [
+        {
+          key: 'field1',
+          type: 'text' as const,
+          label: 'Test Field',
+          required: true,
+        },
+      ],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    it('renders edit mode with existing component data', () => {
+      render(
+        <TestWrapper>
+          <ComponentDesigner
+            component={mockComponent}
+            projectId="test-project"
+          />
+        </TestWrapper>
+      );
+
+      expect(screen.getByText('Edit Component')).toBeInTheDocument();
+      expect(
+        screen.getByText('Modify your component using the form or YAML editor')
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText('Name *')).toHaveValue('Existing Component');
+      expect(screen.getByLabelText('Type *')).toHaveValue('service');
+      expect(screen.getByLabelText('Status *')).toHaveValue('inactive');
+    });
+
+    it('shows update button in edit mode', () => {
+      render(
+        <TestWrapper>
+          <ComponentDesigner
+            component={mockComponent}
+            projectId="test-project"
+          />
+        </TestWrapper>
+      );
+
+      expect(
+        screen.getByRole('button', { name: 'Update' })
+      ).toBeInTheDocument();
+    });
+
+    it('shows error when update fails (API not implemented)', async () => {
+      const onSave = vi.fn();
+      render(
+        <TestWrapper>
+          <ComponentDesigner
+            component={mockComponent}
+            projectId="test-project"
+            onSave={onSave}
+          />
+        </TestWrapper>
+      );
+
+      // Update the form
+      fireEvent.change(screen.getByLabelText('Name *'), {
+        target: { value: 'Updated Component' },
+      });
+      fireEvent.change(screen.getByLabelText('Status *'), {
+        target: { value: 'active' },
+      });
+
+      // Submit the form
+      const submitButton = screen.getByRole('button', { name: 'Update' });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Failed to update component. Please try again.')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('shows update button in YAML tab for edit mode', () => {
+      render(
+        <TestWrapper>
+          <ComponentDesigner
+            component={mockComponent}
+            projectId="test-project"
+          />
+        </TestWrapper>
+      );
+
+      // Switch to YAML tab
+      fireEvent.click(screen.getByText('YAML'));
+
+      expect(
+        screen.getByRole('button', { name: 'Update' })
+      ).toBeInTheDocument();
+    });
+
+    it('handles update error (API not implemented)', async () => {
+      render(
+        <TestWrapper>
+          <ComponentDesigner
+            component={mockComponent}
+            projectId="test-project"
+          />
+        </TestWrapper>
+      );
+
+      // Submit the form
+      const submitButton = screen.getByRole('button', { name: 'Update' });
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Failed to update component. Please try again.')
+        ).toBeInTheDocument();
+      });
+    });
   });
 });

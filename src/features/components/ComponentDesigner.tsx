@@ -142,8 +142,28 @@ fields: []`;
     },
   });
 
-  // Note: Update functionality not available in current API
-  // Only create is supported
+  // Update component mutation
+  const updateComponentMutation = useMutation({
+    mutationFn: async (data: FormData) => {
+      if (!_component?.id)
+        throw new Error('Component ID is required for update');
+
+      // TODO: Replace with actual API endpoint when available
+      // This should be: client.PUT('/projects/{projectId}/components/{componentId}', ...)
+      throw new Error('Component update not yet implemented in API');
+    },
+    onSuccess: _data => {
+      queryClient.invalidateQueries({ queryKey: ['components', projectId] });
+      queryClient.invalidateQueries({
+        queryKey: ['component', _component?.id],
+      });
+      showSuccess('Component updated successfully!');
+      onSave?.(_data);
+    },
+    onError: () => {
+      showError('Failed to update component. Please try again.');
+    },
+  });
 
   // Convert YAML to form data
   const yamlToFormData = useCallback((yamlText: string): FormData | null => {
@@ -214,8 +234,13 @@ fields: []`;
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      // Only create is supported - update functionality not available in API
-      await createComponentMutation.mutateAsync(data);
+      if (_component?.id) {
+        // Update existing component
+        await updateComponentMutation.mutateAsync(data);
+      } else {
+        // Create new component
+        await createComponentMutation.mutateAsync(data);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -236,10 +261,12 @@ fields: []`;
         <div className="max-w-4xl mx-auto p-6">
           <div className="mb-6">
             <h2 className="text-2xl font-semibold text-foreground">
-              Create Component
+              {_component?.id ? 'Edit Component' : 'Create Component'}
             </h2>
             <p className="text-sm text-foreground-secondary">
-              Design your component using the form or YAML editor
+              {_component?.id
+                ? 'Modify your component using the form or YAML editor'
+                : 'Design your component using the form or YAML editor'}
             </p>
           </div>
 
@@ -394,7 +421,13 @@ fields: []`;
                   disabled={isSubmitting}
                   className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors"
                 >
-                  {isSubmitting ? 'Saving...' : 'Create'}
+                  {isSubmitting
+                    ? _component?.id
+                      ? 'Updating...'
+                      : 'Creating...'
+                    : _component?.id
+                      ? 'Update'
+                      : 'Create'}
                 </button>
               </div>
             </form>
@@ -432,7 +465,13 @@ fields: []`;
                   disabled={isSubmitting || !!yamlError}
                   className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors"
                 >
-                  {isSubmitting ? 'Saving...' : 'Create'}
+                  {isSubmitting
+                    ? _component?.id
+                      ? 'Updating...'
+                      : 'Creating...'
+                    : _component?.id
+                      ? 'Update'
+                      : 'Create'}
                 </button>
               </div>
             </div>
