@@ -28,7 +28,7 @@ const router = createBrowserRouter([
         element: <ComponentsRoute />,
       },
       {
-        path: 'components/:id',
+        path: 'projects/:projectId/components/:id',
         element: <ComponentDesignerRoute />,
       },
       {

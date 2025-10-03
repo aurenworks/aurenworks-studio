@@ -1,12 +1,22 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { getComponentWithETag } from '../../lib/api/client';
 import type { components } from '../../lib/api/types';
+
+type Component = components['schemas']['Component'];
+type ComponentWithFields = Component & {
+  fields?: Array<{
+    key: string;
+    label: string;
+    type: 'text' | 'number' | 'date' | 'select';
+    required: boolean;
+    options?: string[];
+  }>;
+};
 
 // Lazy load ComponentDesigner to avoid Monaco editor import during tests
 const ComponentDesigner = lazy(() => import('./ComponentDesigner'));
-
-type Component = components['schemas']['Component'];
 
 export default function ComponentDesignerRoute() {
   const { id, projectId } = useParams<{ id?: string; projectId: string }>();
@@ -14,7 +24,7 @@ export default function ComponentDesignerRoute() {
 
   // Load component data if editing an existing component
   const {
-    data: component,
+    data: componentData,
     isLoading,
     error,
   } = useQuery({
@@ -22,10 +32,8 @@ export default function ComponentDesignerRoute() {
     queryFn: async () => {
       if (!id || !projectId) return null;
 
-      // TODO: Replace with actual API endpoint when available
-      // For now, we'll simulate loading component data
-      // This should be: client.GET('/projects/{projectId}/components/{componentId}', ...)
-      throw new Error('Component loading not yet implemented in API');
+      const { component, etag } = await getComponentWithETag(projectId, id);
+      return { component, etag };
     },
     enabled: !!id && !!projectId,
   });
@@ -84,8 +92,13 @@ export default function ComponentDesignerRoute() {
   return (
     <Suspense fallback={<div>Loading component designer...</div>}>
       <ComponentDesigner
-        component={component || undefined}
+        component={
+          componentData?.component
+            ? (componentData.component as ComponentWithFields)
+            : undefined
+        }
         projectId={projectId || ''}
+        etag={componentData?.etag}
         onSave={handleSave}
         onCancel={handleCancel}
       />

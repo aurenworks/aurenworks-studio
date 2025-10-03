@@ -98,6 +98,27 @@ export default [
     },
   },
   {
+    files: ['mock-api-server.*', '**/mock-api-server.*', 'test-mock-server.*'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        fetch: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off',
+      'no-undef': 'off',
+    },
+  },
+  {
     ignores: [
       'node_modules/**',
       'dist/**',

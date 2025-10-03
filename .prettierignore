@@ -1,14 +1,22 @@
+# Dependencies
 node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build outputs
 dist/
 build/
+.vite/
 coverage/
-*.lock
-*.log
-.env*
-.DS_Store
-.vscode/
-.idea/
-*.min.js
-*.min.css
+
+# Generated files
 src/lib/api/types.ts
-aurenworks-schemas/
+
+# Config files that shouldn't be formatted
+*.config.js
+*.config.ts
+
+# Other files
+.git/
+.DS_Store

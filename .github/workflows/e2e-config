@@ -1,0 +1,43 @@
+# GitHub Workflow Configuration for E2E Testing
+# This file documents the environment variables and configuration needed for E2E testing
+
+# Environment Variables for E2E Testing:
+# - STUDIO_BASE_URL: URL where the Studio is hosted (default: http://localhost:5173)
+# - API_BASE_URL: URL where the API is hosted (default: http://localhost:3000)
+# - DATABASE_URL: PostgreSQL connection string for the API
+# - JWT_SECRET: Secret for JWT token generation
+# - NODE_ENV: Environment (test/development)
+
+# GitHub Secrets that can be configured:
+# - GITHUB_TOKEN: For accessing other repositories (like aurenworks-api)
+# - API_REPOSITORY: Repository name for the API (default: aurenworks-api)
+# - API_BRANCH: Branch to use for API (default: main)
+
+# Workflow Triggers:
+# - Push to main/develop branches
+# - Pull requests to main/develop branches
+# - Manual workflow dispatch
+# - Scheduled runs (optional)
+
+# Artifacts:
+# - playwright-report/: Test results and HTML report
+# - test-results/: Screenshots and videos (on failure)
+# - playwright-videos/: Video recordings of test runs
+
+# Timeout Configuration:
+# - Simple workflow: 20 minutes (recommended)
+# - CI workflow: 30 minutes for E2E tests
+
+# Services:
+# - Mock API server (primary - uses mock-api-server.cjs)
+# - PostgreSQL 15 with health checks (optional, for real API)
+# - Real API server (optional, if available)
+
+# Browser Support:
+# - Chromium (default)
+# - Can be extended to Firefox and WebKit if needed
+
+# Test Data:
+# - Uses seed.sh script for test data
+# - Fallback to mock data if seeding fails
+# - Supports both real and mock API scenarios

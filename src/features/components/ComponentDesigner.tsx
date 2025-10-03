@@ -9,6 +9,7 @@ import { YamlEditor } from '../../components/YamlEditor';
 import { ToastContainer } from '../../components/Toast';
 import { useToast } from '../../hooks/useToast';
 import FieldEditor, { type Field } from './FieldEditor';
+import ConflictResolutionModal from './ConflictResolutionModal';
 import * as yaml from 'js-yaml';
 
 type Component = components['schemas']['Component'];
@@ -16,6 +17,21 @@ type Component = components['schemas']['Component'];
 // Extended component type with fields for local use
 type ComponentWithFields = Component & {
   fields?: Field[];
+};
+
+// Mock component for fallback
+const mockComponent: Component = {
+  id: 'mock-component',
+  name: 'Mock Component',
+  description: 'A mock component',
+  type: 'api',
+  status: 'active',
+  projectId: 'mock-project',
+  config: {},
+  metadata: {},
+  createdAt: '2023-01-01T00:00:00Z',
+  updatedAt: '2023-01-01T00:00:00Z',
+  createdBy: 'mock-user',
 };
 
 // Field schema definition
@@ -64,7 +80,7 @@ type FormData = z.infer<typeof componentSchema>;
 interface ComponentDesignerProps {
   component?: ComponentWithFields;
   projectId: string;
-
+  etag?: string | null;
   onSave?: (_component: Component) => void;
   onCancel?: () => void;
 }
@@ -72,6 +88,7 @@ interface ComponentDesignerProps {
 export default function ComponentDesigner({
   component: _component,
   projectId,
+  etag: initialEtag,
   onSave,
   onCancel,
 }: ComponentDesignerProps) {
@@ -79,6 +96,12 @@ export default function ComponentDesigner({
   const [yamlValue, setYamlValue] = useState('');
   const [yamlError, setYamlError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [etag] = useState<string | null>(initialEtag || null);
+  const [showConflictModal, setShowConflictModal] = useState(false);
+  const [latestComponent, setLatestComponent] = useState<Component | null>(
+    null
+  );
+  const [yourDraft, setYourDraft] = useState<Component | null>(null);
 
   const queryClient = useQueryClient();
   const { toasts, removeToast, showSuccess, showError } = useToast();
@@ -153,25 +176,70 @@ fields: []`;
 
   // Update component mutation
   const updateComponentMutation = useMutation({
-    mutationFn: async (_data: FormData) => {
+    mutationFn: async (data: FormData) => {
       if (!_component?.id)
         throw new Error('Component ID is required for update');
 
-      // TODO: Replace with actual API endpoint when available
-      // This should be: client.PUT('/projects/{projectId}/components/{componentId}', ...)
-      return Promise.reject(
-        new Error('Component update not yet implemented in API')
+      const headers = {
+        ...authHeader(),
+        ...(etag && { 'If-Match': etag }),
+      };
+
+      const res = await client.PUT(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        '/projects/{projectId}/components/{componentId}' as any,
+        {
+          params: {
+            path: { projectId, componentId: _component.id },
+          },
+          headers,
+          body: data,
+        }
       );
+
+      if (res.error) {
+        // Handle 409 conflict
+        if ((res.error as { status?: number }).status === 409) {
+          // Fetch latest component for conflict resolution
+          const latestRes = await client.GET(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            '/projects/{projectId}/components/{componentId}' as any,
+            {
+              params: {
+                path: { projectId, componentId: _component.id },
+              },
+              headers: authHeader(),
+            }
+          );
+
+          if (latestRes.data) {
+            setLatestComponent(latestRes.data as Component);
+            setYourDraft({
+              ..._component,
+              ...data,
+            } as Component);
+            setShowConflictModal(true);
+            throw new Error('CONFLICT');
+          }
+        }
+        throw res.error;
+      }
+
+      return res.data;
     },
-    onSuccess: _data => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['components', projectId] });
       queryClient.invalidateQueries({
         queryKey: ['component', _component?.id],
       });
       showSuccess('Component updated successfully!');
-      onSave?.(_data);
+      onSave?.(data as Component);
     },
-    onError: () => {
+    onError: (error: unknown) => {
+      if ((error as { message?: string }).message === 'CONFLICT') {
+        // Conflict is handled by showing the modal
+        return;
+      }
       showError('Failed to update component. Please try again.');
     },
   });
@@ -268,6 +336,74 @@ fields: []`;
     }
   };
 
+  // Conflict resolution handlers
+  const handleOverwrite = async () => {
+    setShowConflictModal(false);
+    if (yourDraft) {
+      // Force update without ETag
+      const res = await client.PUT(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        '/projects/{projectId}/components/{componentId}' as any,
+        {
+          params: {
+            path: {
+              projectId,
+              componentId: _component?.id || '',
+            },
+          },
+          headers: authHeader(),
+          body: yourDraft,
+        }
+      );
+
+      if (res.error) {
+        showError('Failed to overwrite component. Please try again.');
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['components', projectId] });
+      queryClient.invalidateQueries({
+        queryKey: ['component', _component?.id],
+      });
+      showSuccess('Component updated successfully!');
+      onSave?.(res.data as Component);
+    }
+  };
+
+  const handleOpenLatest = () => {
+    setShowConflictModal(false);
+    if (latestComponent) {
+      // Update form with latest component data
+      const latestData = {
+        name: latestComponent.name,
+        description: latestComponent.description || '',
+        type: latestComponent.type,
+        status: latestComponent.status,
+        config: latestComponent.config || {},
+        metadata: latestComponent.metadata || {},
+        fields: (latestComponent as ComponentWithFields).fields || [],
+      };
+
+      Object.entries(latestData).forEach(([key, value]) => {
+        setValue(key as keyof FormData, value);
+      });
+
+      // Update YAML
+      const yamlData = {
+        name: latestComponent.name,
+        description: latestComponent.description,
+        type: latestComponent.type,
+        status: latestComponent.status,
+        config: latestComponent.config,
+        metadata: latestComponent.metadata,
+        fields: (latestComponent as ComponentWithFields).fields || [],
+      };
+      setYamlValue(yaml.dump(yamlData, { indent: 2 }));
+
+      showSuccess('Loaded latest version. You can now make your changes.');
+    }
+  };
+
   return (
     <>
       <ToastContainer toasts={toasts} onClose={removeToast} />
@@ -289,6 +425,7 @@ fields: []`;
             <button
               type="button"
               onClick={() => setActiveTab('form')}
+              data-testid="form-tab"
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'form'
                   ? 'border-accent text-accent'
@@ -300,6 +437,7 @@ fields: []`;
             <button
               type="button"
               onClick={() => setActiveTab('yaml')}
+              data-testid="yaml-tab"
               className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === 'yaml'
                   ? 'border-accent text-accent'
@@ -461,6 +599,7 @@ fields: []`;
                 onChange={handleYamlChange}
                 height="400px"
                 className="border border-border rounded-md"
+                data-testid="yaml-editor"
               />
 
               <div className="flex justify-end space-x-4">
@@ -477,6 +616,7 @@ fields: []`;
                   type="button"
                   onClick={handleYamlSubmit}
                   disabled={isSubmitting || !!yamlError}
+                  data-testid="save-button"
                   className="px-4 py-2 text-sm font-medium text-white bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-md transition-colors"
                 >
                   {isSubmitting
@@ -492,6 +632,15 @@ fields: []`;
           )}
         </div>
       </FormProvider>
+
+      <ConflictResolutionModal
+        isOpen={showConflictModal}
+        onClose={() => setShowConflictModal(false)}
+        onOverwrite={handleOverwrite}
+        onOpenLatest={handleOpenLatest}
+        latestComponent={latestComponent || mockComponent}
+        yourDraft={yourDraft || mockComponent}
+      />
     </>
   );
 }

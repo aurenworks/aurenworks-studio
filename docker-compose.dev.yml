@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: aurenworks
+    ports:
+      - '5432:5432'
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  api:
+    image: eclipse-temurin:21-jre
+    working_dir: /work
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/aurenworks
+      JWT_SECRET: devsecret
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - '3000:3000'
+    volumes:
+      - ../aurenworks-api/target/aurenworks-api-dev.jar:/work/app.jar
+    depends_on:
+      - db
+    command:
+      ['sh', '-c', 'exec java -Dquarkus.http.port=3000 -jar /work/app.jar']
+
+volumes:
+  dbdata:
