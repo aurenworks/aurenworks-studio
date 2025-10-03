@@ -7,6 +7,13 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
+// Log all requests
+app.use((req, res, next) => {
+  console.log(`Request: ${req.method} ${req.originalUrl}`);
+  console.log('Headers:', req.headers);
+  next();
+});
+
 // Mock data storage
 let projects = [];
 let components = [];
@@ -149,7 +156,13 @@ app.put('/projects/:projectId/components/:id', (req, res) => {
 
   // Check for optimistic concurrency conflict
   const ifMatch = req.headers['if-match'];
+  console.log('PUT request - If-Match header:', ifMatch);
+  console.log('PUT request - Component updatedAt:', component.updatedAt);
+  console.log('PUT request - Expected ETag:', `"${component.updatedAt}"`);
+  console.log('PUT request - ETag match:', ifMatch === `"${component.updatedAt}"`);
+  
   if (ifMatch && ifMatch !== `"${component.updatedAt}"`) {
+    console.log('CONFLICT DETECTED - returning 409');
     return res
       .status(409)
       .json({ error: 'Conflict: Component was modified by another user' });
