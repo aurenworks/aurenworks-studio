@@ -20,3 +20,29 @@ export async function authenticatedRequest<T>(
 ): Promise<T> {
   return requestFn();
 }
+
+// Helper to get component with ETag
+export async function getComponentWithETag(
+  projectId: string,
+  componentId: string
+): Promise<{ component: unknown; etag: string | null }> {
+  const res = await client.GET(
+    '/projects/{projectId}/components/{componentId}',
+    {
+      params: {
+        path: { projectId, componentId },
+      },
+      headers: authHeader(),
+    }
+  );
+
+  if (res.error) throw res.error;
+
+  // Extract ETag from response headers
+  const etag = res.response?.headers.get('etag') || null;
+
+  return {
+    component: res.data,
+    etag,
+  };
+}

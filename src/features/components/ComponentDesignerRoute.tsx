@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { getComponentWithETag } from '../../lib/api/client';
 import type { components } from '../../lib/api/types';
 
 // Lazy load ComponentDesigner to avoid Monaco editor import during tests
@@ -14,7 +15,7 @@ export default function ComponentDesignerRoute() {
 
   // Load component data if editing an existing component
   const {
-    data: component,
+    data: componentData,
     isLoading,
     error,
   } = useQuery({
@@ -22,10 +23,8 @@ export default function ComponentDesignerRoute() {
     queryFn: async () => {
       if (!id || !projectId) return null;
 
-      // TODO: Replace with actual API endpoint when available
-      // For now, we'll simulate loading component data
-      // This should be: client.GET('/projects/{projectId}/components/{componentId}', ...)
-      throw new Error('Component loading not yet implemented in API');
+      const { component, etag } = await getComponentWithETag(projectId, id);
+      return { component, etag };
     },
     enabled: !!id && !!projectId,
   });
@@ -84,8 +83,9 @@ export default function ComponentDesignerRoute() {
   return (
     <Suspense fallback={<div>Loading component designer...</div>}>
       <ComponentDesigner
-        component={component || undefined}
+        component={componentData?.component || undefined}
         projectId={projectId || ''}
+        etag={componentData?.etag}
         onSave={handleSave}
         onCancel={handleCancel}
       />

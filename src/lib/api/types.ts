@@ -100,6 +100,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/projects/{projectId}/components/{componentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Component
+         * @description Retrieve a specific component by ID
+         */
+        get: operations["getComponent"];
+        /**
+         * Update Component
+         * @description Update an existing component
+         */
+        put: operations["updateComponent"];
+        post?: never;
+        /**
+         * Delete Component
+         * @description Delete a component
+         */
+        delete: operations["deleteComponent"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -332,6 +360,28 @@ export interface components {
              */
             description?: string;
             type: components["schemas"]["ComponentType"];
+            /** @description Component configuration */
+            config?: {
+                [key: string]: unknown;
+            };
+            /** @description Additional metadata for the component */
+            metadata?: {
+                [key: string]: unknown;
+            };
+        };
+        UpdateComponentRequest: {
+            /**
+             * @description Human-readable name for the component
+             * @example My Updated Component
+             */
+            name?: string;
+            /**
+             * @description Optional description of the component
+             * @example An updated description
+             */
+            description?: string;
+            type?: components["schemas"]["ComponentType"];
+            status?: components["schemas"]["ComponentStatus"];
             /** @description Component configuration */
             config?: {
                 [key: string]: unknown;
@@ -783,6 +833,187 @@ export interface operations {
             };
             /** @description Component already exists */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getComponent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+                /** @description Unique identifier for the component */
+                componentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Component details */
+            200: {
+                headers: {
+                    /** @description ETag for optimistic concurrency control */
+                    "etag"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Component"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Component not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateComponent: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description ETag for optimistic concurrency control */
+                "if-match"?: string;
+            };
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+                /** @description Unique identifier for the component */
+                componentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateComponentRequest"];
+            };
+        };
+        responses: {
+            /** @description Component updated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Component"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Component not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict - ETag mismatch */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteComponent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+                /** @description Unique identifier for the component */
+                componentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Component deleted successfully */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Component not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
