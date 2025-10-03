@@ -4,7 +4,6 @@ import type { paths } from './types';
 
 const baseUrl =
   import.meta.env?.VITE_API_BASE_URL || 'https://api.auren.dev/v0';
-console.log('API Base URL:', baseUrl);
 export const client = createClient<paths>({ baseUrl });
 
 export function authHeader() {

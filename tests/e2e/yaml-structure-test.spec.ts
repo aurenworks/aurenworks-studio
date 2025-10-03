@@ -52,19 +52,26 @@ test('yaml structure test', async ({ page }) => {
   await page.waitForLoadState('networkidle');
 
   // Wait for the component designer to load (check for either form or yaml tab)
-  await page.waitForSelector('[data-testid="yaml-tab"], [data-testid="form-tab"]', { timeout: 10000 });
+  await page.waitForSelector(
+    '[data-testid="yaml-tab"], [data-testid="form-tab"]',
+    { timeout: 10000 }
+  );
 
   // Debug: Check what's actually on the page
   const pageContent = await page.textContent('body');
   console.log('Page content:', pageContent);
 
   // Check if we have the component designer loaded
-  const hasComponentDesigner = await page.locator('[data-testid="yaml-tab"], [data-testid="form-tab"]').count();
+  const hasComponentDesigner = await page
+    .locator('[data-testid="yaml-tab"], [data-testid="form-tab"]')
+    .count();
   console.log('Has component designer:', hasComponentDesigner > 0);
 
   // If we don't have the component designer, take a screenshot and fail
   if (hasComponentDesigner === 0) {
-    await page.screenshot({ path: 'test-results/yaml-structure-test-no-designer.png' });
+    await page.screenshot({
+      path: 'test-results/yaml-structure-test-no-designer.png',
+    });
     throw new Error('Component designer not loaded');
   }
 
