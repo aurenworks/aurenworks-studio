@@ -224,7 +224,6 @@ describe('ComponentDesigner', () => {
     });
   });
 
-
   it('shows minimal prefilled data for new component', () => {
     render(
       <TestWrapper>
