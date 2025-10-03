@@ -30,7 +30,7 @@ API_BASE=http://localhost:3000 ./seed.sh
 pnpm add -D @playwright/test
 pnpm dlx playwright install
 
-STUDIO_BASE_URL=http://localhost:5173 API_BASE_URL=http://localhost:3000   pnpm playwright test tests/e2e/edit-component-concurrency.spec.ts
+STUDIO_BASE_URL=http://localhost:5173 API_BASE_URL=http://localhost:3000   pnpm playwright test tests/e2e/
 ```
 
 Adjust selectors and routes in the spec to your actual UI.
