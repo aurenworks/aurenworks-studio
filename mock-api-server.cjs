@@ -81,6 +81,8 @@ app.post('/components', (req, res) => {
     updatedAt: new Date().toISOString(),
   };
   components.push(component);
+  console.log('Created component:', component);
+  console.log('Total components:', components.length);
   res.json(component);
 });
 
@@ -98,6 +100,14 @@ app.get('/components/:id', (req, res) => {
 
 // Project-specific component endpoint
 app.get('/projects/:projectId/components/:id', (req, res) => {
+  console.log(
+    `GET /projects/${req.params.projectId}/components/${req.params.id}`
+  );
+  console.log(
+    'Available components:',
+    components.map(c => ({ id: c.id, projectId: c.projectId }))
+  );
+
   const component = components.find(
     c => c.id === req.params.id && c.projectId === req.params.projectId
   );
@@ -105,8 +115,10 @@ app.get('/projects/:projectId/components/:id', (req, res) => {
     // Add ETag header for optimistic concurrency
     const etag = `"${component.updatedAt}"`;
     res.set('ETag', etag);
+    console.log('Found component:', component);
     res.json(component);
   } else {
+    console.log('Component not found');
     res.status(404).json({ error: 'Component not found' });
   }
 });
