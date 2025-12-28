@@ -30,14 +30,22 @@ export async function getComponentWithETag(
   const baseUrl =
     import.meta.env?.VITE_API_BASE_URL || 'https://api.auren.dev/v0';
   const url = `${baseUrl}/projects/${projectId}/components/${componentId}`;
-  const headers = authHeader();
+  const authHeaders = authHeader();
+
+  // Construct headers object explicitly to satisfy TypeScript
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if ('Authorization' in authHeaders) {
+    const authValue = authHeaders.Authorization;
+    if (authValue) {
+      headers.Authorization = authValue;
+    }
+  }
 
   const response = await fetch(url, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers,
-    },
+    headers,
   });
 
   if (!response.ok) {
