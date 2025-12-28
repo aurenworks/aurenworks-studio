@@ -103,11 +103,14 @@ app.get('/projects/:projectId/components', (req, res) => {
   const projectComponents = components.filter(
     c => c.projectId === req.params.projectId
   );
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = parseInt(req.query.offset) || 0;
+  const paginatedComponents = projectComponents.slice(offset, offset + limit);
   res.json({
-    components: projectComponents,
+    components: paginatedComponents,
     total: projectComponents.length,
-    limit: parseInt(req.query.limit) || 10,
-    offset: parseInt(req.query.offset) || 0,
+    limit,
+    offset,
   });
 });
 

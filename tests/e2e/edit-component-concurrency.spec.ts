@@ -126,4 +126,5 @@ test('optimistic concurrency: second editor sees conflict and reloads latest', a
   // Cleanup
   await p1.close();
   await p2.close();
+  await api.dispose();
 });
