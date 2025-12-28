@@ -102,7 +102,7 @@ test('optimistic concurrency: second editor sees conflict and reloads latest', a
 
   // Wait for network to be idle to ensure React Query has processed the mutation
   await p1.waitForLoadState('networkidle');
-  
+
   // Wait for the success toast to appear (toast appears after mutation succeeds)
   // The mutation's onSuccess callback shows the toast, which may happen after the response
   const toast = p1.locator('[data-testid="toast-success"]');
