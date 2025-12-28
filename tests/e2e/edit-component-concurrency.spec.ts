@@ -100,14 +100,16 @@ test('optimistic concurrency: second editor sees conflict and reloads latest', a
   // Verify the response was successful
   expect(response.status()).toBe(200);
 
+  // Wait for network to be idle to ensure React Query has processed the mutation
+  await p1.waitForLoadState('networkidle');
+  
   // Wait for the success toast to appear (toast appears after mutation succeeds)
   // The mutation's onSuccess callback shows the toast, which may happen after the response
-  // First wait for any success toast to appear
   const toast = p1.locator('[data-testid="toast-success"]');
   await expect(toast).toBeVisible({
     timeout: 5000,
   });
-  // Then verify it contains the expected message
+  // Verify it contains the expected message
   await expect(toast).toContainText('Component updated successfully!', {
     timeout: 2000,
   });
