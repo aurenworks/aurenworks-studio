@@ -48,6 +48,7 @@ export default function Toast({
 
   return (
     <div
+      data-testid={type === 'success' ? 'toast-success' : 'toast-error'}
       className={`fixed top-4 right-4 z-50 max-w-sm w-full bg-white border rounded-lg shadow-lg transform transition-all duration-300 ${
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
       } ${bgColor} ${borderColor}`}

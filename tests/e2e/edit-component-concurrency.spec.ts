@@ -85,11 +85,20 @@ test('optimistic concurrency: second editor sees conflict and reloads latest', a
   await p2.fill('[data-testid="component-name"]', 'Updated by Editor 2');
 
   // 3. First editor saves successfully (updates server ETag)
-  await p1.click('button[type="submit"]');
+  const submitButton1 = p1.locator('button[type="submit"]');
+  await submitButton1.click();
+
+  // Wait for the button to not be disabled (mutation completed)
+  await expect(submitButton1).not.toBeDisabled({ timeout: 5000 });
   await p1.waitForLoadState('networkidle');
 
   // Verify first editor's save was successful
-  await expect(p1.locator('text=Component updated successfully')).toBeVisible({
+  // Wait for the success toast to appear
+  await expect(
+    p1.locator(
+      '[data-testid="toast-success"]:has-text("Component updated successfully!")'
+    )
+  ).toBeVisible({
     timeout: 5000,
   });
 
