@@ -98,6 +98,40 @@ app.get('/components/:id', (req, res) => {
   }
 });
 
+// Project-specific component list endpoint
+app.get('/projects/:projectId/components', (req, res) => {
+  const projectComponents = components.filter(
+    c => c.projectId === req.params.projectId
+  );
+  res.json({
+    components: projectComponents,
+    total: projectComponents.length,
+    limit: parseInt(req.query.limit) || 10,
+    offset: parseInt(req.query.offset) || 0,
+  });
+});
+
+// Project-specific component creation endpoint
+app.post('/projects/:projectId/components', (req, res) => {
+  const component = {
+    id: `component-${nextId++}`,
+    projectId: req.params.projectId,
+    name: req.body.name,
+    description: req.body.description || '',
+    type: req.body.type || 'api',
+    status: req.body.status || 'active',
+    config: req.body.config || {},
+    metadata: req.body.metadata || {},
+    fields: req.body.fields || [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  components.push(component);
+  console.log('Created component:', component);
+  console.log('Total components:', components.length);
+  res.json(component);
+});
+
 // Project-specific component endpoint
 app.get('/projects/:projectId/components/:id', (req, res) => {
   console.log(
