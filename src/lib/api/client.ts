@@ -26,25 +26,30 @@ export async function getComponentWithETag(
   projectId: string,
   componentId: string
 ): Promise<{ component: unknown; etag: string | null }> {
-  const res = await client.GET(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    '/projects/{projectId}/components/{componentId}' as any,
-    {
-      params: {
-        path: { projectId, componentId },
-      },
-      headers: authHeader(),
-    }
-  );
+  // Use fetch directly to access response headers (ETag)
+  const baseUrl =
+    import.meta.env?.VITE_API_BASE_URL || 'https://api.auren.dev/v0';
+  const url = `${baseUrl}/projects/${projectId}/components/${componentId}`;
+  const headers = authHeader();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((res as any).error) throw (res as any).error;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch component: ${response.statusText}`);
+  }
 
   // Extract ETag from response headers
-  const etag = res.response?.headers.get('etag') || null;
+  const etag = response.headers.get('etag') || null;
+  const component = await response.json();
 
   return {
-    component: res.data,
+    component,
     etag,
   };
 }
