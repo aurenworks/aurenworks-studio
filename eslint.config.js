@@ -26,6 +26,7 @@ export default [
         localStorage: 'readonly',
         console: 'readonly',
         process: 'readonly',
+        fetch: 'readonly',
       },
     },
     plugins: {

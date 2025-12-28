@@ -19,7 +19,11 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
-        options?: never;
+        /**
+         * CORS Preflight for Health Check
+         * @description Handle CORS preflight requests for the health check endpoint
+         */
+        options: operations["optionsHealth"];
         head?: never;
         patch?: never;
         trace?: never;
@@ -43,7 +47,11 @@ export interface paths {
          */
         post: operations["createProject"];
         delete?: never;
-        options?: never;
+        /**
+         * CORS Preflight for Projects
+         * @description Handle CORS preflight requests for project endpoints
+         */
+        options: operations["optionsProjects"];
         head?: never;
         patch?: never;
         trace?: never;
@@ -71,7 +79,11 @@ export interface paths {
          * @description Delete a project and all its associated resources
          */
         delete: operations["deleteProject"];
-        options?: never;
+        /**
+         * CORS Preflight for Project
+         * @description Handle CORS preflight requests for a specific project endpoint
+         */
+        options: operations["optionsProject"];
         head?: never;
         patch?: never;
         trace?: never;
@@ -95,7 +107,42 @@ export interface paths {
          */
         post: operations["createComponent"];
         delete?: never;
-        options?: never;
+        /**
+         * CORS Preflight for Components
+         * @description Handle CORS preflight requests for component endpoints
+         */
+        options: operations["optionsComponents"];
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/components/{componentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Component
+         * @description Retrieve a specific component by ID
+         */
+        get: operations["getComponent"];
+        /**
+         * Update Component
+         * @description Update an existing component. This endpoint supports optimistic concurrency
+         *     control via ETags. Include the If-Match header with the ETag value from
+         *     the most recent GET request to prevent concurrent modification conflicts.
+         *
+         */
+        put: operations["updateComponent"];
+        post?: never;
+        delete?: never;
+        /**
+         * CORS Preflight for Component
+         * @description Handle CORS preflight requests for a specific component endpoint
+         */
+        options: operations["optionsComponent"];
         head?: never;
         patch?: never;
         trace?: never;
@@ -341,6 +388,82 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        UpdateComponentRequest: {
+            /**
+             * @description Human-readable name for the component
+             * @example My Updated Component
+             */
+            name?: string;
+            /**
+             * @description Optional description of the component
+             * @example An updated description
+             */
+            description?: string;
+            type?: components["schemas"]["ComponentType"];
+            status?: components["schemas"]["ComponentStatus"];
+            /** @description Component configuration */
+            config?: {
+                [key: string]: unknown;
+            };
+            /** @description Additional metadata for the component */
+            metadata?: {
+                [key: string]: unknown;
+            };
+        };
+        /** @description Error response returned when a 409 Conflict occurs due to optimistic
+         *     concurrency control. The resource has been modified since the client's
+         *     last GET request, and the ETag in the If-Match header does not match
+         *     the current resource version.
+         *      */
+        ConflictErrorResponse: {
+            /**
+             * @description Error code
+             * @example CONCURRENT_MODIFICATION
+             */
+            error: string;
+            /**
+             * @description Human-readable error message
+             * @example The resource has been modified since your last request. Please fetch the latest version and try again.
+             */
+            message: string;
+            /**
+             * Format: date-time
+             * @description Timestamp when the conflict was detected
+             */
+            timestamp: string;
+            /** @description Details about the concurrency conflict */
+            conflict: {
+                /**
+                 * @description Type of resource that conflicted
+                 * @example component
+                 */
+                resourceType: string;
+                /**
+                 * @description Identifier of the conflicting resource
+                 * @example my-component
+                 */
+                resourceId: string;
+                /**
+                 * @description Current ETag value of the resource
+                 * @example "xyz789"
+                 */
+                currentETag: string;
+                /**
+                 * @description ETag value provided in the If-Match header
+                 * @example "abc123"
+                 */
+                providedETag: string;
+            };
+            /** @description Additional error details */
+            details?: {
+                [key: string]: unknown;
+            };
+            /**
+             * @description Unique identifier for the request
+             * @example req_123456789
+             */
+            requestId?: string;
+        };
         ComponentListResponse: {
             components: components["schemas"]["Component"][];
             /** @description Total number of components matching the query */
@@ -354,7 +477,62 @@ export interface components {
     responses: never;
     parameters: never;
     requestBodies: never;
-    headers: never;
+    headers: {
+        /** @description Allowed origin for CORS requests. In development, this is typically
+         *     `http://localhost:5173`. In production, this will be the studio domain.
+         *     The server may return `*` for public endpoints or a specific origin
+         *     for authenticated requests.
+         *      */
+        AccessControlAllowOrigin: string;
+        /** @description Comma-separated list of HTTP methods allowed for CORS requests.
+         *     All endpoints support GET, POST, PUT, DELETE, and OPTIONS.
+         *      */
+        AccessControlAllowMethods: string;
+        /** @description Comma-separated list of headers allowed in CORS requests.
+         *     Includes Authorization (for Bearer tokens), Content-Type, X-API-Key, and If-Match (for optimistic concurrency control).
+         *      */
+        AccessControlAllowHeaders: string;
+        /** @description Entity tag for optimistic concurrency control. The ETag is a quoted string
+         *     that represents the current version of the resource. Clients should include
+         *     this value in the If-Match header when updating the resource to prevent
+         *     concurrent modification conflicts.
+         *
+         *     **Format:** The ETag value is always a quoted string (e.g., `"abc123"`).
+         *     When comparing ETags, implementations must use strong comparison as per
+         *     RFC 7232.
+         *      */
+        ETag: string;
+        /** @description Conditional request header for optimistic concurrency control. The client
+         *     must include the ETag value received from a previous GET request when
+         *     updating a resource. If the ETag does not match the current resource
+         *     version, the server will return a 409 Conflict response.
+         *
+         *     **Format:** The If-Match value must be a quoted string matching the ETag
+         *     from the resource's last response. The value `*` can be used to match any
+         *     existing resource, but this is not recommended for component updates.
+         *      */
+        IfMatch: string;
+        /** @description Indicates whether credentials (cookies, authorization headers) are
+         *     allowed in CORS requests. Must be the literal string "true" when
+         *     credentials are supported.
+         *
+         *     **Implementation Note:** This header is **conditionally included** in
+         *     responses. Implementations should only include this header when credentials
+         *     are actually allowed for the specific request. When credentials are not
+         *     allowed, this header must be omitted entirely (not set to "false").
+         *
+         *     **OpenAPI Specification:** Per OpenAPI 3.0, all response headers are
+         *     optional by default. The presence of this header in the schema via `$ref`
+         *     is for documentation purposes only and does not require implementations to
+         *     include it in every response. Implementations must conditionally include
+         *     this header based on request context and authentication requirements.
+         *      */
+        AccessControlAllowCredentials: "true";
+        /** @description Maximum time (in seconds) that a browser can cache the preflight
+         *     response. Default is 86400 (24 hours).
+         *      */
+        AccessControlMaxAge: number;
+    };
     pathItems: never;
 }
 export type $defs = Record<string, never>;
@@ -371,6 +549,8 @@ export interface operations {
             /** @description API is healthy */
             200: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -380,11 +560,36 @@ export interface operations {
             /** @description API is unhealthy */
             503: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
+            };
+        };
+    };
+    optionsHealth: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CORS preflight response */
+            200: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Methods": components["headers"]["AccessControlAllowMethods"];
+                    "Access-Control-Allow-Headers": components["headers"]["AccessControlAllowHeaders"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    "Access-Control-Max-Age": components["headers"]["AccessControlMaxAge"];
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -407,6 +612,8 @@ export interface operations {
             /** @description List of projects */
             200: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -416,6 +623,8 @@ export interface operations {
             /** @description Bad request */
             400: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -425,6 +634,8 @@ export interface operations {
             /** @description Unauthorized */
             401: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -434,6 +645,8 @@ export interface operations {
             /** @description Internal server error */
             500: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -458,6 +671,8 @@ export interface operations {
             /** @description Project created successfully */
             201: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -467,6 +682,8 @@ export interface operations {
             /** @description Bad request */
             400: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -476,6 +693,8 @@ export interface operations {
             /** @description Unauthorized */
             401: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -485,6 +704,8 @@ export interface operations {
             /** @description Project already exists */
             409: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -494,11 +715,36 @@ export interface operations {
             /** @description Internal server error */
             500: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
+            };
+        };
+    };
+    optionsProjects: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CORS preflight response */
+            200: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Methods": components["headers"]["AccessControlAllowMethods"];
+                    "Access-Control-Allow-Headers": components["headers"]["AccessControlAllowHeaders"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    "Access-Control-Max-Age": components["headers"]["AccessControlMaxAge"];
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -517,6 +763,8 @@ export interface operations {
             /** @description Project details */
             200: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -526,6 +774,8 @@ export interface operations {
             /** @description Unauthorized */
             401: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -535,6 +785,8 @@ export interface operations {
             /** @description Project not found */
             404: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -544,6 +796,8 @@ export interface operations {
             /** @description Internal server error */
             500: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -571,6 +825,8 @@ export interface operations {
             /** @description Project updated successfully */
             200: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -580,6 +836,8 @@ export interface operations {
             /** @description Bad request */
             400: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -589,6 +847,8 @@ export interface operations {
             /** @description Unauthorized */
             401: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -598,6 +858,8 @@ export interface operations {
             /** @description Project not found */
             404: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -607,6 +869,8 @@ export interface operations {
             /** @description Internal server error */
             500: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -630,6 +894,8 @@ export interface operations {
             /** @description Project deleted successfully */
             204: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content?: never;
@@ -637,6 +903,8 @@ export interface operations {
             /** @description Unauthorized */
             401: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -646,6 +914,8 @@ export interface operations {
             /** @description Project not found */
             404: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -655,11 +925,39 @@ export interface operations {
             /** @description Internal server error */
             500: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
+            };
+        };
+    };
+    optionsProject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CORS preflight response */
+            200: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Methods": components["headers"]["AccessControlAllowMethods"];
+                    "Access-Control-Allow-Headers": components["headers"]["AccessControlAllowHeaders"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    "Access-Control-Max-Age": components["headers"]["AccessControlMaxAge"];
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -685,6 +983,8 @@ export interface operations {
             /** @description List of components */
             200: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -694,6 +994,8 @@ export interface operations {
             /** @description Bad request */
             400: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -703,6 +1005,8 @@ export interface operations {
             /** @description Unauthorized */
             401: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -712,6 +1016,8 @@ export interface operations {
             /** @description Project not found */
             404: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -721,6 +1027,8 @@ export interface operations {
             /** @description Internal server error */
             500: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -748,6 +1056,9 @@ export interface operations {
             /** @description Component created successfully */
             201: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    ETag: components["headers"]["ETag"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -757,6 +1068,8 @@ export interface operations {
             /** @description Bad request */
             400: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -766,6 +1079,8 @@ export interface operations {
             /** @description Unauthorized */
             401: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -775,6 +1090,8 @@ export interface operations {
             /** @description Project not found */
             404: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -784,6 +1101,8 @@ export interface operations {
             /** @description Component already exists */
             409: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
@@ -793,11 +1112,237 @@ export interface operations {
             /** @description Internal server error */
             500: {
                 headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
+            };
+        };
+    };
+    optionsComponents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CORS preflight response */
+            200: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Methods": components["headers"]["AccessControlAllowMethods"];
+                    "Access-Control-Allow-Headers": components["headers"]["AccessControlAllowHeaders"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    "Access-Control-Max-Age": components["headers"]["AccessControlMaxAge"];
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getComponent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+                /** @description Unique identifier for the component */
+                componentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Component details */
+            200: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    ETag: components["headers"]["ETag"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Component"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Component not found */
+            404: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateComponent: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description ETag value from the most recent GET request for this component.
+                 *     The update will only proceed if the ETag matches the current resource version.
+                 *      */
+                "If-Match": string;
+            };
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+                /** @description Unique identifier for the component */
+                componentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateComponentRequest"];
+            };
+        };
+        responses: {
+            /** @description Component updated successfully */
+            200: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    ETag: components["headers"]["ETag"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Component"];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Component not found */
+            404: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict - The resource has been modified since the last GET request.
+             *     The ETag in the If-Match header does not match the current resource version.
+             *     The client should fetch the latest version and retry the update.
+             *      */
+            409: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    ETag: components["headers"]["ETag"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConflictErrorResponse"];
+                };
+            };
+            /** @description Precondition Failed - The If-Match header is missing or invalid.
+             *     The client must include a valid If-Match header with the ETag value.
+             *      */
+            412: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal server error */
+            500: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    optionsComponent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Unique identifier for the project */
+                projectId: string;
+                /** @description Unique identifier for the component */
+                componentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CORS preflight response */
+            200: {
+                headers: {
+                    "Access-Control-Allow-Origin": components["headers"]["AccessControlAllowOrigin"];
+                    "Access-Control-Allow-Methods": components["headers"]["AccessControlAllowMethods"];
+                    "Access-Control-Allow-Headers": components["headers"]["AccessControlAllowHeaders"];
+                    "Access-Control-Allow-Credentials": components["headers"]["AccessControlAllowCredentials"];
+                    "Access-Control-Max-Age": components["headers"]["AccessControlMaxAge"];
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
